@@ -1,0 +1,435 @@
+<?xml version="1.0"?>
+  <week>
+    <word>
+      <partofspeech>Noun
+</partofspeech>
+      <gender>Masculine
+</gender>
+      <english>Dream
+</english>
+      <hebrew>&#x5D7;&#x5B8;&#x5DC;&#x5D5;&#x5B9;&#x5DD;
+&#x5D7;&#x5B2;&#x5DC;&#x5D5;&#x5B9;&#x5DE;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+    </word>
+    <word>
+      <partofspeech>Noun
+</partofspeech>
+      <gender>Feminine
+</gender>
+      <english>Booklet
+</english>
+      <hebrew>&#x5D7;&#x5D5;&#x5B9;&#x5D1;&#x5B6;&#x5E8;&#x5B6;&#x5EA;
+&#x5D7;&#x5D5;&#x5B9;&#x5D1;&#x5B0;&#x5E8;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+    </word>
+    <word>
+      <partofspeech>Noun
+</partofspeech>
+      <gender>Masculine
+</gender>
+      <english>Newspaper
+</english>
+      <hebrew>&#x5E2;&#x5B4;&#x5D9;&#x5EA;&#x5D5;&#x5B9;&#x5DF;
+&#x5E2;&#x5B4;&#x5D9;&#x5EA;&#x5D5;&#x5B9;&#x5E0;&#x5B4;&#x5D9;&#x5DD; </hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>January
+</english>
+      <hebrew>&#x5D9;&#x5B8;&#x5E0;&#x5D5;&#x5BC;&#x5D0;&#x5B8;&#x5E8;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>February
+</english>
+      <hebrew>&#x5E4;&#x5B6;&#x5D1;&#x5BC;&#x5B0;&#x5E8;&#x5D5;&#x5BC;&#x5D0;&#x5B8;&#x5E8;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>March
+</english>
+      <hebrew>&#x5DE;&#x5B6;&#x5E8;&#x5B0;&#x5E5;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>April
+</english>
+      <hebrew>&#x5D0;&#x5B7;&#x5E4;&#x5BC;&#x5B0;&#x5E8;&#x5B4;&#x5D9;&#x5DC;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>May
+</english>
+      <hebrew>&#x5DE;&#x5B8;&#x5D0;&#x5D9;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>June
+</english>
+      <hebrew>&#x5D9;&#x5D5;&#x5BC;&#x5E0;&#x5B4;&#x5D9;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>July
+</english>
+      <hebrew>&#x5D9;&#x5D5;&#x5BC;&#x5DC;&#x5B4;&#x5D9;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>August
+</english>
+      <hebrew>&#x5D0;&#x5D5;&#x5B9;&#x5D2;&#x5D5;&#x5BC;&#x5E1;&#x5B0;&#x5D8;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>September
+</english>
+      <hebrew>&#x5E1;&#x5B6;&#x5E4;&#x5BC;&#x5B0;&#x5D8;&#x5B6;&#x5DE;&#x5B0;&#x5D1;&#x5BC;&#x5B6;&#x5E8;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>October
+</english>
+      <hebrew>&#x5D0;&#x5D5;&#x5B9;&#x5E7;&#x5B0;&#x5D8;&#x5D5;&#x5B9;&#x5D1;&#x5BC;&#x5B6;&#x5E8;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>November
+</english>
+      <hebrew>&#x5E0;&#x5D5;&#x5B9;&#x5D1;&#x5B6;&#x5DE;&#x5B0;&#x5D1;&#x5BC;&#x5B6;&#x5E8;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>December
+</english>
+      <hebrew>&#x5D3;&#x5B6;&#x5E6;&#x5B6;&#x5DE;&#x5B0;&#x5D1;&#x5BC;&#x5B6;&#x5E8;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>Adjective
+</partofspeech>
+      <gender>      </gender>
+      <english>Right
+</english>
+      <hebrew>&#x5E0;&#x5B8;&#x5DB;&#x5D5;&#x5B9;&#x5DF;
+&#x5E0;&#x5B0;&#x5DB;&#x5D5;&#x5B9;&#x5E0;&#x5B8;&#x5D4;
+&#x5E0;&#x5B0;&#x5DB;&#x5D5;&#x5B9;&#x5E0;&#x5B4;&#x5D9;&#x5DD;
+&#x5E0;&#x5B0;&#x5DB;&#x5D5;&#x5B9;&#x5E0;&#x5D5;&#x5B9;&#x5EA;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>Noun
+</partofspeech>
+      <gender>Masculine, Plural
+</gender>
+      <english>Life/lives
+</english>
+      <hebrew>&#x5D7;&#x5B7;&#x5D9;&#x5B4;&#x5D9;&#x5DD; </hebrew>
+    </word>
+    <word>
+      <partofspeech>Verb
+</partofspeech>
+      <gender>      </gender>
+      <english>To look for
+</english>
+      <hebrew>&#x5DC;&#x5B0;&#x5D7;&#x5B7;&#x5E4;&#x5BC;&#x5B5;&#x5E9;&#x5C2; &#x5D7;.&#x5E4;.&#x5E9;
+&#x5DE;&#x5B0;&#x5D7;&#x5B7;&#x5E4;&#x5BC;&#x5B5;&#x5E9;&#x5C2;
+&#x5DE;&#x5B0;&#x5D7;&#x5B7;&#x5E4;&#x5BC;&#x5B6;&#x5E9;&#x5C2;&#x5B6;&#x5EA;
+&#x5DE;&#x5B0;&#x5D7;&#x5B7;&#x5E4;&#x5BC;&#x5B0;&#x5E9;&#x5C2;&#x5B4;&#x5D9;&#x5DD;
+&#x5DE;&#x5B0;&#x5D7;&#x5B7;&#x5E4;&#x5BC;&#x5B0;&#x5E9;&#x5C2;&#x5D5;&#x5B9;&#x5EA;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>Verb
+</partofspeech>
+      <gender>      </gender>
+      <english>Recognize, to know
+</english>
+      <hebrew>&#x5DC;&#x5B0;&#x5D4;&#x5B7;&#x5DB;&#x5BC;&#x5B4;&#x5D9;&#x5E8; &#x5E0;.&#x5DB;.&#x5E8;
+&#x5DE;&#x5B7;&#x5DB;&#x5BC;&#x5B4;&#x5D9;&#x5E8;
+&#x5DE;&#x5B7;&#x5DB;&#x5BC;&#x5B4;&#x5D9;&#x5E8;&#x5B8;&#x5D4;
+&#x5DE;&#x5B7;&#x5DB;&#x5BC;&#x5B4;&#x5D9;&#x5E8;&#x5B4;&#x5D9;&#x5DD;
+&#x5DE;&#x5B7;&#x5DB;&#x5BC;&#x5B4;&#x5D9;&#x5E8;&#x5D5;&#x5B9;&#x5EA;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>Verb
+</partofspeech>
+      <gender>      </gender>
+      <english>To meet </english>
+      <hebrew>&#x5DC;&#x5B4;&#x5E4;&#x5B0;&#x5D2;&#x5D5;&#x5B9;&#x5E9; &#x5E4;.&#x5D2;.&#x5E9;
+&#x5E4;&#x5BC;&#x5D5;&#x5B9;&#x5D2;&#x5B5;&#x5E9;
+&#x5E4;&#x5BC;&#x5D5;&#x5B9;&#x5D2;&#x5B6;&#x5E9;&#x5B6;&#x5EA;
+&#x5E4;&#x5BC;&#x5D5;&#x5B9;&#x5D2;&#x5B0;&#x5E9;&#x5B4;&#x5D9;&#x5DD;
+&#x5E4;&#x5BC;&#x5D5;&#x5B9;&#x5D2;&#x5B0;&#x5E9;&#x5D5;&#x5B9;&#x5EA;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>Verb
+</partofspeech>
+      <gender>      </gender>
+      <english>To call ring
+</english>
+      <hebrew>&#x5DC;&#x5B0;&#x5E6;&#x5B7;&#x5DC;&#x5B0;&#x5E6;&#x5B5;&#x5DC; &#x5E6;.&#x5DC;.&#x5E6;.&#x5DC;
+&#x5DE;&#x5B0;&#x5E6;&#x5B7;&#x5DC;&#x5B0;&#x5E6;&#x5B5;&#x5DC;
+&#x5DE;&#x5B0;&#x5E6;&#x5B7;&#x5DC;&#x5B0;&#x5E6;&#x5B6;&#x5DC;&#x5B6;&#x5EA;
+&#x5DE;&#x5B0;&#x5E6;&#x5B7;&#x5DC;&#x5B0;&#x5E6;&#x5B0;&#x5DC;&#x5B4;&#x5D9;&#x5DD;
+&#x5DE;&#x5B0;&#x5E6;&#x5B7;&#x5DC;&#x5B0;&#x5E6;&#x5B0;&#x5DC;&#x5D5;&#x5B9;&#x5EA;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>Every one
+</english>
+      <hebrew>&#x5DB;&#x5BC;&#x5D5;&#x5BC;&#x5DC;&#x5B8;&#x5DD;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>Doesn&#x2019;t matter
+</english>
+      <hebrew>&#x5D0;&#x5B5;&#x5D9;&#x5DF; &#x5D3;&#x5B8;&#x5D1;&#x5B8;&#x5E8;
+</hebrew>
+    </word>
+    <word>
+      <partofspeech>      </partofspeech>
+      <gender>      </gender>
+      <english>When
+</english>
+      <hebrew>&#x5DE;&#x5B8;&#x5EA;&#x5B7;&#x5D9;
+</hebrew>
+    </word>
+    <word>
+      <hebrew>&#x5D0;&#x5B6;&#x5D7;&#x5B8;&#x5D3; </hebrew>
+      <gender>Masculine</gender>
+      <english>1</english>
+    </word>
+    <word>
+      <hebrew>&#x5E9;&#x5B0;&#x5E0;&#x5B7;&#x5D9;&#x5B4;&#x5D9;&#x5DD;</hebrew>
+      <gender>Masculine</gender>
+      <english>2</english>
+    </word>
+    <word>
+      <hebrew>&#x5E9;&#x5B0;&#x5DC;&#x5D5;&#x5B9;&#x5E9;&#x5B8;&#x5D4; </hebrew>
+      <gender>Masculine</gender>
+      <english>3</english>
+    </word>
+    <word>
+      <hebrew>&#x5D0;&#x5B7;&#x5E8;&#x5B0;&#x5D1;&#x5B8;&#x5BC;&#x5E2;&#x5B8;&#x5D4; </hebrew>
+      <gender>Masculine</gender>
+      <english>4</english>
+    </word>
+    <word>
+      <hebrew>&#x5D7;&#x5B2;&#x5DE;&#x5B4;&#x5D9;&#x5E9;&#x5B8;&#x5D4; </hebrew>
+      <gender>Masculine</gender>
+      <english>5</english>
+    </word>
+    <word>
+      <hebrew>&#x5E9;&#x5B4;&#x5D9;&#x5E9;&#x5B8;&#x5D4; </hebrew>
+      <gender>Masculine</gender>
+      <english>6</english>
+    </word>
+    <word>
+      <hebrew>&#x5E9;&#x5B4;&#x5D1;&#x5B0;&#x5E2;&#x5B8;&#x5D4; </hebrew>
+      <gender>Masculine</gender>
+      <english>7</english>
+    </word>
+    <word>
+      <hebrew>&#x5E9;&#x5B0;&#x5DE;&#x5D5;&#x5B9;&#x5E0;&#x5B8;&#x5D4; </hebrew>
+      <gender>Masculine</gender>
+      <english>8</english>
+    </word>
+    <word>
+      <hebrew>&#x5EA;&#x5B4;&#x5E9;&#x5B0;&#x5E2;&#x5B8;&#x5D4; </hebrew>
+      <gender>Masculine</gender>
+      <english>9</english>
+    </word>
+    <word>
+      <hebrew>&#x5E2;&#x5B2;&#x5E9;&#x5B8;&#x5C2;&#x5E8;&#x5B8;&#x5D4; </hebrew>
+      <gender>Masculine</gender>
+      <english>10</english>
+    </word>
+    <word>
+      <hebrew>&#x5D0;&#x5B7;&#x5D7;&#x5B7;&#x5D3; &#x5E2;&#x5B8;&#x5E9;&#x5B8;&#x5C2;&#x5E8; </hebrew>
+      <gender>Masculine</gender>
+      <english>11</english>
+    </word>
+    <word>
+      <hebrew>&#x5E9;&#x5B0;&#x5E0;&#x5B5;&#x5D9;&#x5D9;&#x5DD; &#x5E2;&#x5B8;&#x5E9;&#x5B8;&#x5C2;&#x5E8; </hebrew>
+      <gender>Masculine</gender>
+      <english>12</english>
+    </word>
+    <word>
+      <hebrew>&#x5E9;&#x5B0;&#x5DC;&#x5D5;&#x5B9;&#x5E9;&#x5B8;&#x5D4; &#x5E2;&#x5B8;&#x5E9;&#x5B8;&#x5C2;&#x5E8; </hebrew>
+      <gender>Masculine</gender>
+      <english>13</english>
+    </word>
+    <word>
+      <hebrew>&#x5D0;&#x5B7;&#x5E8;&#x5B0;&#x5D1;&#x5B8;&#x5BC;&#x5E2;&#x5B8;&#x5D4; &#x5E2;&#x5B8;&#x5E9;&#x5B8;&#x5C2;&#x5E8; </hebrew>
+      <gender>Masculine</gender>
+      <english>14</english>
+    </word>
+    <word>
+      <hebrew>&#x5D7;&#x5B2;&#x5DE;&#x5B4;&#x5D9;&#x5E9;&#x5B8;&#x5D4; &#x5E2;&#x5B8;&#x5E9;&#x5B8;&#x5C2;&#x5E8; </hebrew>
+      <gender>Masculine</gender>
+      <english>15</english>
+    </word>
+    <word>
+      <hebrew>&#x5E9;&#x5B4;&#x5D9;&#x5E9;&#x5B8;&#x5D4; &#x5E2;&#x5B8;&#x5E9;&#x5B8;&#x5C2;&#x5E8; </hebrew>
+      <gender>Masculine</gender>
+      <english>16</english>
+    </word>
+    <word>
+      <hebrew>&#x5E9;&#x5B4;&#x5D1;&#x5B0;&#x5E2;&#x5B8;&#x5D4; &#x5E2;&#x5B8;&#x5E9;&#x5B8;&#x5C2;&#x5E8; </hebrew>
+      <gender>Masculine</gender>
+      <english>17</english>
+    </word>
+    <word>
+      <hebrew>&#x5E9;&#x5B0;&#x5DE;&#x5D5;&#x5B9;&#x5E0;&#x5B8;&#x5D4; &#x5E2;&#x5B8;&#x5E9;&#x5B8;&#x5C2;&#x5E8; </hebrew>
+      <gender>Masculine</gender>
+      <english>18</english>
+    </word>
+    <word>
+      <hebrew>&#x5EA;&#x5B4;&#x5E9;&#x5B0;&#x5E2;&#x5B8;&#x5D4; &#x5E2;&#x5B8;&#x5E9;&#x5B8;&#x5C2;&#x5E8; </hebrew>
+      <gender>Masculine</gender>
+      <english>19</english>
+    </word>
+    <word>
+      <hebrew>&#x5E2;&#x5B6;&#x5E9;&#x5B0;&#x5C2;&#x5E8;&#x5B4;&#x5D9;&#x5DD; </hebrew>
+      <gender>Masculine</gender>
+      <english>20</english>
+    </word>
+    <word>
+      <hebrew>&#x5D0;&#x5D5;&#x5B9;&#x5D4;&#x5B6;&#x5DC; &#x5D0;&#x5D5;&#x5B9;&#x5D4;&#x5B8;&#x5DC;&#x5B4;&#x5D9;&#x5DD;</hebrew>
+      <partofspeech>noun</partofspeech>
+      <gender>Masculine</gender>
+      <english>A tent</english>
+    </word>
+    <word>
+      <hebrew>&#x5DE;&#x5B8;&#x5E7;&#x5D5;&#x5B9;&#x5DD; &#x5DE;&#x5B0;&#x5E7;&#x5D5;&#x5B9;&#x5DE;&#x5D5;&#x5B9;&#x5EA;</hebrew>
+      <partofspeech>noun</partofspeech>
+      <gender>Masculine</gender>
+      <english>A place</english>
+    </word>
+    <word>
+      <hebrew>&#x5DC;&#x5B0;&#x5D8;&#x5B7;&#x5D9;&#x5B5;&#x5D9;&#x5DC; &#x5D8;.&#x5D9;.&#x5DC; &#x5DE;&#x5B0;&#x5D8;&#x5B7;&#x5D9;&#x5B5;&#x5D9;&#x5DC; &#x5DE;&#x5B0;&#x5D8;&#x5B7;&#x5D9;&#x5B6;&#x5D9;&#x5DC;&#x5B6;&#x5EA; &#x5DE;&#x5B0;&#x5D8;&#x5B7;&#x5D9;&#x5B0;&#x5D9;&#x5DC;&#x5B4;&#x5D9;&#x5DD; &#x5DE;&#x5B0;&#x5D8;&#x5B7;&#x5D9;&#x5B0;&#x5D9;&#x5DC;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+      <partofspeech>Verb</partofspeech>
+      <english>To travel</english>
+    </word>
+    <word>
+      <hebrew>&#x5DC;&#x5B4;&#x5D7;&#x5B0;&#x5D9;&#x5D5;&#x5B9;&#x5EA; &#x5D7;.&#x5D9;.&#x5D4; &#x5D7;&#x5B7;&#x5D9; &#x5D7;&#x5B8;&#x5D9;&#x5B8;&#x5D4; &#x5D7;&#x5B7;&#x5D9;&#x5B4;&#x5D9;&#x5DD; &#x5D7;&#x5B8;&#x5D9;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+      <partofspeech>Verb</partofspeech>
+      <english>To live (life) </english>
+    </word>
+    <word>
+      <hebrew>&#x5E2;&#x5D5;&#x5B9;&#x5D3;</hebrew>
+      <english>More</english>
+    </word>
+    <word>
+      <hebrew>&#x5D8;&#x5B4;&#x5D9;&#x5D5;&#x5BC;&#x5DC;, &#x5D8;&#x5BC;&#x5D9;&#x5D5;&#x5BC;&#x5DC;&#x5B4;&#x5D9;&#x5DD; </hebrew>
+      <partofspeech>noun</partofspeech>
+      <gender>Masculine</gender>
+      <english>A trip</english>
+    </word>
+    <word>
+      <hebrew>&#x5DE;&#x5B4;&#x5E9;&#x5B0;&#x5E4;&#x5B8;&#x5BC;&#x5D8; &#x5DE;&#x5B4;&#x5E9;&#x5B0;&#x5E4;&#x5B8;&#x5BC;&#x5D8;&#x5B4;&#x5D9;&#x5DD; </hebrew>
+      <partofspeech>noun</partofspeech>
+      <gender>Masculine</gender>
+      <english>A sentence, a trial</english>
+    </word>
+    <word>
+      <hebrew>&#x5DE;&#x5B0;&#x5E2;&#x5B7;&#x5E0;&#x5B0;&#x5D9;&#x5B5;&#x5D9;&#x5DF; &#x5DE;&#x5B0;&#x5E2;&#x5B7;&#x5E0;&#x5B0;&#x5D9;&#x5B6;&#x5E0;&#x5B6;&#x5EA; &#x5DE;&#x5B0;&#x5E2;&#x5B7;&#x5E0;&#x5B0;&#x5D9;&#x5B5;&#x5E0;&#x5B4;&#x5D9;&#x5DD; &#x5DE;&#x5B0;&#x5E2;&#x5B7;&#x5E0;&#x5B0;&#x5D9;&#x5B5;&#x5E0;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+      <partofspeech>adj.</partofspeech>
+      <english>Interesting</english>
+    </word>
+    <word>
+      <hebrew>&#x5E2;&#x5B8;&#x5D9;&#x5B5;&#x5D9;&#x5E3; &#x5E2;&#x5B2;&#x5D9;&#x5B5;&#x5D9;&#x5E4;&#x5B8;&#x5D4; &#x5E2;&#x5B2;&#x5D9;&#x5B5;&#x5D9;&#x5E4;&#x5B4;&#x5D9;&#x5DD; &#x5E2;&#x5B2;&#x5D9;&#x5B5;&#x5D9;&#x5E4;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+      <partofspeech>adj </partofspeech>
+      <english>Tired</english>
+    </word>
+    <word>
+      <hebrew>&#x5EA;&#x5B0;&#x5E9;&#x5D5;&#x5BC;&#x5D1;&#x5B8;&#x5D4; &#x5EA;&#x5B0;&#x5E9;&#x5D5;&#x5BC;&#x5D1;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+      <partofspeech>noun</partofspeech>
+      <gender>Feminine</gender>
+      <english>An answer</english>
+    </word>
+    <word>
+      <hebrew>&#x5DE;&#x5B4;&#x5D1;&#x5B0;&#x5D7;&#x5B8;&#x5DF; &#x5DE;&#x5B4;&#x5D1;&#x5B0;&#x5D7;&#x5B8;&#x5E0;&#x5B4;&#x5D9;&#x5DD; </hebrew>
+      <partofspeech>Noun</partofspeech>
+      <gender>Masculine</gender>
+      <english>An exam</english>
+    </word>
+    <word>
+      <hebrew>&#x5DE;&#x5B8;&#x5E7;&#x5D5;&#x5B9;&#x5DD; &#x5DE;&#x5B0;&#x5E7;&#x5D5;&#x5B9;&#x5DE;&#x5D5;&#x5B9;&#x5EA;</hebrew>
+      <partofspeech>Noun</partofspeech>
+      <gender>Masculine</gender>
+      <english>A place</english>
+    </word>
+    <word>
+      <hebrew>&#x5D0;&#x5D5;&#x5B9;&#x5D8;&#x5D5;&#x5B9;&#x5D1;&#x5BC;&#x5D5;&#x5BC;&#x5E1; &#x5D0;&#x5D5;&#x5B9;&#x5D8;&#x5D5;&#x5B9;&#x5D1;&#x5BC;&#x5D5;&#x5BC;&#x5E1;&#x5B4;&#x5D9;&#x5DD;</hebrew>
+      <partofspeech>noun</partofspeech>
+      <gender>Masculine</gender>
+      <english>Bus</english>
+    </word>
+    <word>
+      <hebrew>&#x5EA;&#x5B8;&#x5D9;&#x5B8;&#x5D9;&#x5E8; &#x5EA;&#x5B8;&#x5D9;&#x5B6;&#x5D9;&#x5E8;&#x5B6;&#x5EA; &#x5EA;&#x5B8;&#x5D9;&#x5B8;&#x5D9;&#x5E8;&#x5B4;&#x5D9;&#x5DD; &#x5EA;&#x5B8;&#x5D9;&#x5B8;&#x5D9;&#x5E8;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+      <partofspeech>Noun</partofspeech>
+      <gender>Masculine, Feminine, Plural</gender>
+      <english>Tourist</english>
+    </word>
+    <word>
+      <hebrew>&#x5DC;&#x5B4;&#x5EA;&#x5B0;&#x5E4;&#x5BC;&#x5D5;&#x5B9;&#x5E1; &#x5EA;.&#x5E4;.&#x5E1; &#x5EA;&#x5D5;&#x5B9;&#x5E4;&#x5B5;&#x5E1; &#x5EA;&#x5D5;&#x5B9;&#x5E4;&#x5B6;&#x5E1;&#x5B6;&#x5EA; &#x5EA;&#x5D5;&#x5B9;&#x5E4;&#x5B0;&#x5E1;&#x5B4;&#x5D9;&#x5DD; &#x5EA;&#x5D5;&#x5B9;&#x5E4;&#x5B0;&#x5E1;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+      <partofspeech>Verb</partofspeech>
+      <english>To catch, to grab</english>
+    </word>
+    <word>
+      <hebrew>&#x5DC;&#x5B0;&#x5D4;&#x5B4;&#x5EA;&#x5B0;&#x5E7;&#x5B7;&#x5E9;&#x5B5;&#x5BC;&#x5E8; &#x5E7;.&#x5E9;.&#x5E8; &#x5DE;&#x5B4;&#x5EA;&#x5B0;&#x5E7;&#x5B7;&#x5E9;&#x5B5;&#x5BC;&#x5E8; &#x5DE;&#x5B4;&#x5EA;&#x5B0;&#x5E7;&#x5B7;&#x5E9;&#x5B6;&#x5BC;&#x5E8;&#x5B6;&#x5EA; &#x5DE;&#x5B4;&#x5EA;&#x5B0;&#x5E7;&#x5B7;&#x5BC;&#x5E9;&#x5B0;&#x5E8;&#x5B4;&#x5D9;&#x5DD; &#x5DE;&#x5B4;&#x5EA;&#x5B0;&#x5E7;&#x5B7;&#x5E9;&#x5B0;&#x5BC;&#x5E8;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+      <partofspeech>Verb</partofspeech>
+      <english>To call (on the phone), to contact</english>
+    </word>
+    <word>
+      <hebrew>&#x5DC;&#x5B0;&#x5D1;&#x5B7;&#x5E7;&#x5B5;&#x5E8; &#x5D1;.&#x5E7;.&#x5E8; &#x5DE;&#x5B0;&#x5D1;&#x5B7;&#x5E7;&#x5B5;&#x5BC;&#x5E8; &#x5DE;&#x5B0;&#x5D1;&#x5B7;&#x5E7;&#x5B6;&#x5BC;&#x5E8;&#x5B6;&#x5EA; &#x5DE;&#x5B0;&#x5D1;&#x5B7;&#x5E7;&#x5B0;&#x5BC;&#x5E8;&#x5B4;&#x5D9;&#x5DD; &#x5DE;&#x5B0;&#x5D1;&#x5B7;&#x5E7;&#x5B0;&#x5BC;&#x5E8;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+      <partofspeech>Verb</partofspeech>
+      <english>To visit, to criticize </english>
+    </word>
+    <word>
+      <hebrew>&#x5DC;&#x5B4;&#x5E6;&#x5B0;&#x5D7;&#x5D5;&#x5B9;&#x5E7; &#x5E6;.&#x5D7;.&#x5E7;. &#x5E6;&#x5D5;&#x5B9;&#x5D7;&#x5B5;&#x5E7; &#x5E6;&#x5D5;&#x5B9;&#x5D7;&#x5B6;&#x5E7;&#x5B6;&#x5EA; &#x5E6;&#x5D5;&#x5B9;&#x5D7;&#x5B2;&#x5E7;&#x5B4;&#x5D9;&#x5DD; &#x5E6;&#x5D5;&#x5B9;&#x5D7;&#x5B2;&#x5E7;&#x5D5;&#x5B9;&#x5EA; </hebrew>
+      <partofspeech>Verb</partofspeech>
+      <english>To laugh</english>
+    </word>
+    <word>
+      <hebrew>&#x5D5;&#x5B0;&#x5E2;&#x5D5;&#x5B9;&#x5D3;</hebrew>
+      <english>Plus</english>
+    </word>
+    <word>
+      <hebrew>&#x5E4;&#x5B8;&#x5BC;&#x5D7;&#x5D5;&#x5B9;&#x5EA;</hebrew>
+      <english>Minus, less</english>
+    </word>
+    <word>
+      <hebrew>&#x5D4;&#x5B5;&#x5DD;</hebrew>
+      <english>Equal</english>
+    </word>
+  </week>

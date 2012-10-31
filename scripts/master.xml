@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<media>audio</media>
+<media>video</media>
+<media>image</media>
+<media>color</media>
+<reserved>word</reserved>
+<reserved>week</reserved>
+<reserved>card</reserved>
+<reserved>root</reserved>
+</root>

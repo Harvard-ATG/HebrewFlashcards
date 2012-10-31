@@ -1,0 +1,77 @@
+/****** General **********/
+h1
+{
+text-decoration:underline;
+font-style:italic;
+font-weight:bold;
+font-size:24px;
+padding:0px;
+margin:0px;
+}
+
+body
+{
+background-color:#7FFFD4;
+text-align:center;
+font-size:18px;
+}
+
+div {text-align:center;}
+/***** Tables, Rows, and Cells **************/
+table, tr, th, td
+{
+text-align:center;
+margin-left:auto;
+margin-right:auto;
+border: 1px solid black;
+}
+
+th {font-weight:bold;}
+/******** Inputs and Form Fields ************/
+input[type="text"], select {background-color: #FFFFFF;}
+
+input[type="text"]:focus, select:focus, input[type="text"]:hover, select:hover
+{
+background-color: #FFFF99;
+border-color: #FFA500;
+}
+
+input[type="text"]:hover, select:hover {border-color: #FF5500;}
+
+input[type="radio"]
+{
+width:1.3em;
+height:1.3em;
+}
+
+/******** Links ***************/
+a:link {text-decoration:none;}
+a:visited {text-decoration:none;}
+a:hover {text-decoration:underline;}
+a:active {text-decoration:underline;}
+
+#card {background-color:white;}
+
+/* Main entries in Cards (primary and secondary fields) */
+div.mainCardRow
+{
+font-weight:bold;
+font-size:30px;
+padding:10px;
+}
+
+/* footer at the end of the file */
+.footer
+{
+text-decoration:overline;
+text-align:center;
+}
+
+img
+{
+vertical-align: middle;
+max-height:150px;
+max-width:150px;
+min-height:30px;
+min-width:30px;
+}

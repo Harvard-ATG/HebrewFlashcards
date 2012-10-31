@@ -1,0 +1,128 @@
+@import url("general.css");
+/*******************
+ * Tables
+ ******************/
+div {overflow:auto;}
+
+th.subhead
+{
+font-size:18px;
+text-decoration:underline;
+}
+/*******************
+ * Divs/Classes
+ *******************/
+/* table to structure how the interface looks */
+#main
+{
+height:90%;
+width:100%;
+font-size:18px;
+}
+
+.cell
+{
+width:25%;
+height:95%;
+}
+/******************
+ * Main Cells
+ ******************/
+#preview, #manage, #files, #words {height:98%;}
+
+/******************
+ * Files
+ ******************/
+ /* CELL containing the table/form listing all of the xml files */
+#xml {max-height:85%;}
+#xmlTable {max-height:75%;}
+#xmlFileList {font-size:18px}
+#fileinterface
+{
+max-height:25%;
+padding: 5px;
+}
+
+/* Table/Form for upload new files */
+#uploadFileForm, #uploadAudioForm {display:none;}
+/******************
+ * Manage - Word Edit
+ ******************/
+ /* div containing table for editing a word */
+#wordEdit{max-height:75%};
+#wordEditForm{};
+#prototype {max-height:50%;}
+/******************
+ * Manage - Prototype
+ ******************/
+#prototypeTable
+{
+max-height:50%;
+margin:1px;
+display:none;
+}
+ 
+/******************
+ * Preview - Flashcards
+ ******************/
+ /* CELL containing preview of flaschards for give word */
+#flashcards {max-height:100%;}
+
+/* table within #flaschards */
+#card
+{
+border: 1px solid black;
+font-size:18px;
+background-color:white;
+}
+
+/******************
+ * Preview - Audio
+ ******************/
+#audioInterface, #audioPlayer {font-size:16px;}
+
+#audio
+{
+margin:1px;
+max-height:35%;
+display:none;
+}
+ /******************
+ * Words
+ ******************/
+#wordsForm {max-height:100%;}
+#wordtable {max-height:80%;}
+#selectCardList{}
+#cardList{font-size:18px;}
+#wordinterface {min-height:10%;}
+#slideWordList {max-height:5%;}
+ /******************
+ * Media - Video
+ ******************/
+.video
+{
+height:150px;
+width:250px;
+}
+
+ /******************
+ * SlideToggle - .slide is the button
+ ******************/
+.slide:hover{background-color:#FFFFDD;}
+
+.slide
+{
+margin:1px;
+background-color:#AADDFF;
+text-decoration:underline;
+font-weight:bold;
+font-size:18px;
+border: 1px solid black;
+min-height:25px;
+}
+
+.panel
+{
+background-color:#CCFFDD;
+border: 1px solid black;
+}

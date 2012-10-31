@@ -1,0 +1,13 @@
+@import url("general.css");
+/*******************
+ * Tables
+ ******************/
+td {padding:3px;}
+/*******************
+ * Divs/Classes
+ *******************/
+.video
+{
+height:200px;
+width:300px;
+}

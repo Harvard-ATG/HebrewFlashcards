@@ -1,0 +1,32 @@
+@import url("general.css");
+
+h1 {font-size:80px;}
+button, label, select, input, body, div, table, td {font-size:70px;}
+td {padding:10;}
+
+button
+{
+margin:0px 20px;
+padding:10px 10px;
+}
+
+/* Main entries in Cards (primary and secondary fields) */
+div.mainCardRow
+{
+font-size:90px;
+padding:0px;
+}
+
+.video
+{
+height:600px;
+width:900px;
+}
+
+img
+{
+max-height:500px;
+max-width:500px;
+min-height:100px;
+min-width:100px;
+}
