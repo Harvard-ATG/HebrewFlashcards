@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php require("../scripts/admin.php");?>
 <html>
 	<head>
