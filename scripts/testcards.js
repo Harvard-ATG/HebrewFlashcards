@@ -1,14 +1,14 @@
 alert("Testing");
 
 /****** Global Variables for Flashcards **********************************/ //{
-		var baseURL = 'http://www.fas.harvard.edu/~atgproject/flashcards/';
+		var baseURL = 'https://www.fas.harvard.edu/~atgproject/flashcards/';
 		var filename = ''; // current page file name
 		var foldername = ''; // current page's directory name
 		getLocation();
-		
+
 		var isHebrew = undefined; // whether or not current page is for Hebrew classes
 		checkHebrew();
-		
+
 		var xmlDoc = undefined; //xml Document open
 		var title = ''; // set page title
 		var primary = '';
@@ -18,12 +18,12 @@ alert("Testing");
 		var cardFields = new Array(); // the structure of the cards
 		var colorSupport = true;
 		getPrototype();
-		
+
 		var mediaFields = new Array();
 		getMediaFields();
-		
+
 		var results = new Array();
-		
+
 		document.getElementsByTagName("head")[0].innerHTML += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />';
 		var pagetitle = title;
 		if (filename == "admin.cgi"){
@@ -31,23 +31,23 @@ alert("Testing");
 		}
 		document.getElementsByTagName("head")[0].innerHTML += "<title>"+pagetitle+"</title>";
 		document.write('<div id="header"><h1>'+pagetitle+'</h1></div>');
-		
+
 		var xmlFiles = new Array(); // array of xml filenames
 		var words = 0; //number of words in set of flashcards
         var word = 1;  // current word number
 		var weekFile = '';  // filename of current set
 		var weekName = '';  // display name of current set
-//}	
+//}
 /****** Setup ************************************************************/ //{
 	//initializes the flashcards
     function initialize(){
 		getLocation();
 		getPrototype();
-		//getXMLFileNames();  
-		
+		//getXMLFileNames();
+
 		var table = '<center><table id="card"></table><div id="changeCardInterface"></div></center>';
 		document.getElementById("flashcards").innerHTML = table + document.getElementById("flashcards").innerHTML;
-		
+
 		// Display radio button that selects field to hide
 		selectWeek();
 		selectHidden();
@@ -60,7 +60,7 @@ alert("Testing");
 		}
 		// *****TODO*******: Fix Bug with selectHidden() when the website is first opened
 	}
-	
+
 	//Get xml filenames from mapfile and display dropdown list of weeks
 	function getXMLFileNames(){
 		xmlFiles = new Array();
@@ -69,7 +69,7 @@ alert("Testing");
 		for (var i = 0; i < itemnum; i++)
 			xmlFiles.push(xmlDoc.getElementsByTagName("xml")[i].childNodes[0].nodeValue);
 	}
-	
+
 	// Get card prototype
 	function getPrototype(){
 		xmlDoc = openXMLPrecise("xml/prototype.xml");
@@ -87,7 +87,7 @@ alert("Testing");
 			cardFields.push(field);
 		}
 	}
-	
+
 	function getMediaFields(){
 		mediaFields = new Array();
 		var master = openXMLPrecise("../scripts/master.xml");
@@ -96,7 +96,7 @@ alert("Testing");
 			mediaFields.push(master.getElementsByTagName("media")[i].childNodes[0].nodeValue);
 	}
 //}
-/****** Flashcard Interface **********************************************/ //{ 
+/****** Flashcard Interface **********************************************/ //{
 	// diplays word info on flashcards; returns # of rows in interface
 	function displayWordInfo(){
 		var cardColor = getField("color");
@@ -115,35 +115,35 @@ alert("Testing");
 			currentrow = displayField(cardFields[i], currentrow, cardColor);
 		return currentrow;
 	}
-	
+
 	// refreshes/updates flashcards with new info, settings, or changes
 	function refresh(){
 		for (var i = document.getElementById("card").rows.length - 1; i >=0; i--)
-			deleterow(i);	
+			deleterow(i);
 		var numrows = displayWordInfo();
 		if (word <= words)
 			displayChangeCardInterface(numrows);
 	}
 //}
-/****** Retrieve Data from XML *******************************************/ //{		
+/****** Retrieve Data from XML *******************************************/ //{
 	// open xml file relative to parent directory
 	function openXML(xml){
 		return openXMLPrecise("../" + xml);
 	}
-	
+
 	function openXMLPrecise(xml){
 	  // code for IE7+, Firefox, Chrome, Opera, Safari
 	  if (window.XMLHttpRequest)
 		xmlhttp=new XMLHttpRequest();
 	  // code for IE6, IE5
-	  else 
+	  else
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  // adds random ending to force browswer to reload xml
 	  xmlhttp.open("GET",xml + "?nocache=" + new Date().getTime(),false);
 	  xmlhttp.send();
-	  return xmlhttp.responseXML;	
+	  return xmlhttp.responseXML;
 	}
-			
+
 	// Checks whether a field has a value
 	function getField(field){
 		var value = getWordInfo(field);
@@ -151,7 +151,7 @@ alert("Testing");
 			return "";
 		return value;
 	}
-	
+
 	// gets word info from xml document
 	function getWordInfo(info){
 	  if (word <= words){
@@ -173,15 +173,15 @@ alert("Testing");
 	  else if (wordnum > words)
 		word = 1;
 	  else
-		word = wordnum; 
+		word = wordnum;
 	  refresh();
 	  if (document.getElementById("wordedit")){
 		wordEditTable();
 		recheckForms();
 	  }
 	}
-//}   
-/****** Week Interface ***************************************************/ //{ 
+//}
+/****** Week Interface ***************************************************/ //{
 	// dropdown for select flashcard set
 	function selectWeek(id) {
 	  if (id === undefined)
@@ -231,7 +231,7 @@ alert("Testing");
 		  }
 	    }
 	  }
-	  document.getElementById(id).innerHTML += dropdown + '</select><br />';		  
+	  document.getElementById(id).innerHTML += dropdown + '</select><br />';
 	}
 
 	// sets flashcard set, opens xml document, and reinitializes globals
@@ -255,8 +255,8 @@ alert("Testing");
 		}
 	  }
 	}
-	
-	// takes in a file path ('test/xml/Week1.xml') 
+
+	// takes in a file path ('test/xml/Week1.xml')
 	// and returns name ('test: Week1')
 	function getWeekName(weekFile){
 		return weekFile.replace("/xml/", ": ").replace(".xml", "");
@@ -268,18 +268,18 @@ alert("Testing");
 		return foldername + '/xml/' + localfile;
 	}
 //}
-/****** Hidden Interface *************************************************/ //{ 
+/****** Hidden Interface *************************************************/ //{
 	// radio button for selecting which field to hide
 	function selectHidden(id){
 	  if (id === undefined)
 		id = "flashcards";
 	  var radio = '<label><b>Hide:</b></label><input type="radio" name="hiddeninfo" value="' + info + '"' +
 		'onchange="setHidden(this.value)" class="bigButton">'+info.toUpperCase()+'</input>' +
-		'<input type="radio" name="hiddeninfo" value="'+hidden+'" checked="checked"' + 
+		'<input type="radio" name="hiddeninfo" value="'+hidden+'" checked="checked"' +
 		'onchange="setHidden(this.value)" class="bigButton">'+hidden.toUpperCase()+'</input><br />';
 		document.getElementById(id).innerHTML += radio;
 	}
-	
+
 	// sets hidden field
 	function setHidden(hiddeninfo){
 	  if (hidden != hiddeninfo)
@@ -289,7 +289,7 @@ alert("Testing");
 		refresh();
 	}
 //}
-/****** Search ***********************************************************/ //{ 
+/****** Search ***********************************************************/ //{
 	function enterSearch(id){
 		if (id === undefined)
 			id = "flashcards";
@@ -297,7 +297,7 @@ alert("Testing");
 		input += '<input name="searchText" type="text" id="searchText" onchange="executeSearch(this.value)" /><br /><div id="searchResults"></div>';
 		document.getElementById(id).innerHTML += input;
 	}
-	
+
 	function executeSearch(){
 		document.getElementById("searchResults").innerHTML = "";
 		var text = document.getElementById("searchText").value;
@@ -338,9 +338,9 @@ alert("Testing");
 		select = '<select onchange="openResult(this.value)"><option value="">' + counter + ' RESULTS FOUND!</option>'+ select + "</select>";
 	    document.getElementById("searchResults").innerHTML = select;
 	}
-	
-	
-	
+
+
+
 	function searchResult(weekname, wordnum, field, value){
 		this.weekfile = getCurDirFilePath(weekname);
 		this.wordnum = wordnum + 1;
@@ -348,11 +348,11 @@ alert("Testing");
 		this.value = value;
 		this.toString = toString;
 	}
-	
+
 	function toString(){
 		return getWeekName(this.weekfile) + ", Word #"+ this.wordnum + ", " + this.field + ": " + this.value;
 	}
-	
+
 	function openResult(i){
 		if (i == "")
 			return false;
@@ -376,7 +376,7 @@ alert("Testing");
 				insertrow(row, value, color);
 			return row + 1;
 		}
-		
+
 		// add field to flashcard
         function insertrow(row, text, color){
 			if (!colorSupport)
@@ -405,8 +405,8 @@ alert("Testing");
 
 		// displays interfaces for switching between cards
 		function displayChangeCardInterface(row){
-			var changeCardInterface = 'Word #<input size="2" maxlength="3" type="text" value='+ 
-				word + ' onchange="jumpToWord(Number(this.value));" />/' + words + 
+			var changeCardInterface = 'Word #<input size="2" maxlength="3" type="text" value='+
+				word + ' onchange="jumpToWord(Number(this.value));" />/' + words +
 				'<br /><button onclick="jumpToWord(1);">l\<\<</button><button onclick="jumpToWord(word-1);">\<\<</button>' +
 				'<button onclick="jumpToWord();">Random</button>' +
 				'<button onclick="jumpToWord(word+1);">\>\></button><button onclick="jumpToWord(words);">\>\>l</button>';
@@ -426,7 +426,7 @@ alert("Testing");
 					return "";
 			}
 		}
-		
+
 		function mediaLabel(fieldname){
 			if (fieldname.length == 5)
 				return "";
@@ -435,7 +435,7 @@ alert("Testing");
 			else
 				return fieldname.slice(5) + ': ';
 		}
-		
+
 		// plays audiofile if one exist for words
 		function audioHTML(audio, autoplay){
 			if (autoplay === undefined)
@@ -468,7 +468,7 @@ alert("Testing");
 			}
 			return '<div style="font-size:20px;">No Audio File</div>';
 		}
-		
+
 		function imageHTML(url){
 			var platform = getplatform();
 			var width = '';
@@ -493,25 +493,25 @@ alert("Testing");
 				case "android":
 					if (!url.match(/youtube.com/gi))
 						return '<a href="' + url +'" target="videoiframe">Play Video</a>'
-					return '<iframe class="video" src="http://www.youtube.com/embed/'+ getParameterByName("v", url) +'?rel=0" frameborder="0" allowfullscreen>url</iframe>';
+					return '<iframe class="video" src="https://www.youtube.com/embed/'+ getParameterByName("v", url) +'?rel=0" frameborder="0" allowfullscreen>url</iframe>';
 				case "iOS":
-					//return '<iframe class="video" src="http://www.youtube.com/embed/'+ getParameterByName("v", url) +'?rel=0" frameborder="0" allowfullscreen>url</iframe>';
+					//return '<iframe class="video" src="https://www.youtube.com/embed/'+ getParameterByName("v", url) +'?rel=0" frameborder="0" allowfullscreen>url</iframe>';
 					return '<a href="' + url +'" target="videoiframe">Play Video</a>';
 				default:
 					if (!url.match(/youtube.com/gi))
 						return '<video class="video" controls="controls" src="' + url + '"></video>';
-					return '<iframe class="video" src="http://www.youtube.com/embed/'+ getParameterByName("v", url) +'?rel=0" frameborder="0" allowfullscreen>url</iframe>';
+					return '<iframe class="video" src="https://www.youtube.com/embed/'+ getParameterByName("v", url) +'?rel=0" frameborder="0" allowfullscreen>url</iframe>';
 			}
 		}
-		
+
 		function getAbsoluteURL(url){
 			if (url.substr(0,4) == "www.")
-				url = "http://" + url;
-			else if (url.slice(0,7).toLowerCase() != "http://")
+				url = "https://" + url;
+			else if (url.slice(0,7).toLowerCase() != "https://")
 				url = baseURL + url;
 			return url;
 		}
-		
+
 		function isMedia(field, media){
 			var identifier = field.slice(0,5).toLowerCase()
 			if (media != undefined){
@@ -526,7 +526,7 @@ alert("Testing");
 			}
 			return false;
 		}
-		
+
 		function getMIMEType(url){
 			if (url.match(/.mp3$/))
 				return "audio/mpeg";
@@ -549,7 +549,7 @@ alert("Testing");
 	// Displays all of the xmlFiles used for Flashcards, based on mapfile
 	function drawTable(){
 		// Main Table
-		document.write('<table border="1" id="main"><tr><th>Files</th><th>Manage</th><th>Preview</th><th>Words</th></tr>' + 
+		document.write('<table border="1" id="main"><tr><th>Files</th><th>Manage</th><th>Preview</th><th>Words</th></tr>' +
 			'<tr><td class="cell"><div id="files"><p class="slide" id="slideXMLFiles">Browse XML</p><div id="xml" class="panel"></div>' +
 			'<p id="slideAudio" class="slide">Browse Audio</p><div class="panel" id="audio"></div></div></td>' +
 			'<td class="cell"><div id="manage"><div id="wordedit"><p class="slide" id="slideWordEdit">Edit Word:</p><div id="wordEditForm" class="panel"></div></div><div id="prototype" /></div></td>' +
@@ -563,7 +563,7 @@ alert("Testing");
 		setWeek(getCurDirFilePath(xmlFiles[0]));
 		//setWeek(xmlFiles[0].slice(0, xmlFiles[0].indexOf('.')));
 	}
-	
+
 	// Rechecks the xmlFile and word in the two tables
 	function recheckForms(){
 		for (var i = 0; i < xmlFiles.length; i++) {
@@ -582,7 +582,7 @@ alert("Testing");
 				document.getElementById("cardList").rows[word-1].style.backgroundColor = "#66FF00";
 			else
 				document.getElementById("cardList").rows[i].style.backgroundColor = "#7FFFD4";
-		}	
+		}
 	}
 
 	// retrieces the checkvalue for a form with radio buttons
@@ -593,7 +593,7 @@ alert("Testing");
 				return radioFiles[i].value;
 		}
 	}
-	
+
 	// retrieces the checkvalue for a form with radio buttons
 	function getCheckedValues(form, checkboxname){
 		var checkboxes = document.forms[form].elements[checkboxname];
@@ -604,8 +604,8 @@ alert("Testing");
 		}
 		return checked;
 	}
-//}	
-/****** Admin - XML Table ************************************************/ //{ 
+//}
+/****** Admin - XML Table ************************************************/ //{
 	// Displaces the list of xml file names
 	function xmlTable(){
 		getXMLFileNames();
@@ -619,7 +619,7 @@ alert("Testing");
 		table += '</form></table></div><div id="fileinterface"></div>';
 		document.getElementById("xml").innerHTML = table;
 	}
-	
+
 	function fileInterface(){
 		var fileinterface = 'Selected File: <button type="button" onclick="downloadXML()">Download</button>';
 		fileinterface += '<button type="button" onclick="confirmDeleteXML()">Delete</button>';
@@ -630,7 +630,7 @@ alert("Testing");
 		fileinterface += '<button type="button" onclick="confirmReplaceXML()">Upload</button></form>';
 		document.getElementById("fileinterface").innerHTML = fileinterface;
 	}
-	
+
 	function newXMLFile(){
 		var newfile = prompt("New XML File Name: ", ".xml");
 		if (newfile != "" && newfile != ".xml"){
@@ -648,12 +648,12 @@ alert("Testing");
 			document.forms["newFileForm"].submit();
 		}
 	}
-	
+
 	function downloadXML(){
 		var checkedvalue = getRadioValue("deleteFileForm", "deleteFile");
 		window.open(baseURL + "scripts/download.cgi?file=../" + checkedvalue, "_self");
 	}
-	
+
 	// Confirms deletion of an xml file
 	function confirmDeleteXML(){
 		var checkedvalue = getRadioValue("deleteFileForm", "deleteFile");
@@ -662,7 +662,7 @@ alert("Testing");
 			document.forms["deleteFileForm"].submit();
 		}
 	}
-	
+
 	// Confirms that uploading file might replace existing file
 	function confirmReplaceXML(){
 		var confirmation = confirm("If a file already exists with the same name as this uploaded file, it will be replaced. Continue?");
@@ -671,7 +671,7 @@ alert("Testing");
 		}
 	}
 //}
-/****** Admin - Manage (Word Edit) ***************************************/ //{ 
+/****** Admin - Manage (Word Edit) ***************************************/ //{
 	// Displays the word editing table
 	function wordEditTable(){
 		var table = 'Edit Word:<input type="text" readonly="readonly" value="' + weekName + ' - Word #' + word + '" />';
@@ -694,13 +694,13 @@ alert("Testing");
 		else{
 			table += "<tr><td>No Word #" + word + "</td></tr>";
 		}
-		
-		table += '</table><input type="hidden" name="wordUpdate" value="true" /><input type="hidden" name="updateweek" value="' + 
+
+		table += '</table><input type="hidden" name="wordUpdate" value="true" /><input type="hidden" name="updateweek" value="' +
 		weekFile +'" /><input type="hidden" name="updateword" value="' + word +'" /><input type="submit" value="Update" /></form>';
 		document.getElementById("wordEditForm").innerHTML = table;
 	}
 //}
-/****** Admin - Manage (Prototype) ***************************************/ //{ 
+/****** Admin - Manage (Prototype) ***************************************/ //{
 	function prototypeTable(){
 		var table = '<p id="slidePrototype" class="slide">Modify Prototype</p>';
 		table += '<div class="panel" id="prototypeTable"><form method="post" id="deleteFieldForm"><table border="1"><tr><th>Position</th><th>Field</th></tr>';
@@ -730,12 +730,12 @@ alert("Testing");
 		table += '<button type="button" onclick="setSecondary()">Set as Secondary Field</button></div>';
 		document.getElementById("prototype").innerHTML = table;
 	}
-	
+
 	function moveFieldDown(fieldnumber){
 		document.write('<form method="post" name="moveFieldDownForm"><input type="hidden" name="fieldDown" value="' + fieldnumber + '" /></form>')
 		document.forms["moveFieldDownForm"].submit()
 	}
-	
+
 	function addField(){
 		var newfield = prompt("New field: ");
 		if (newfield.match(/\s/g)){
@@ -754,7 +754,7 @@ alert("Testing");
 			document.forms["newFieldForm"].submit();
 		}
 	}
-	
+
 	function setSpecialField(specialfield){
 		//*****TODO***** disallow setting audio, video, etc as primary or secondary field
 		var text = '';
@@ -800,14 +800,14 @@ alert("Testing");
 		document.write(form);
 		document.forms["setSpecialFieldsForm"].submit();
 	}
-	
+
 	function setPrimary(){
 		setSpecialField("primary");
 	}
 	function setSecondary(){
 		setSpecialField("secondary");
 	}
-	
+
 	function confirmDeleteField(){
 		var checkedvalue = getRadioValue("deleteFieldForm", "deleteField");
 		if (checkedvalue == undefined)
@@ -831,12 +831,12 @@ alert("Testing");
 		}
 	}
 //}
-/****** Admin - Preview **************************************************/ //{ 
+/****** Admin - Preview **************************************************/ //{
 	function audioTable(){
 		var table = '<table border="0"><tr><td><div id="audioInterface"></div></td></tr><tr><td><div id="audioPlayer"></div></td></tr></table>';
 		document.getElementById("audio").innerHTML = table;
 	}
-	
+
 	function checkMP3(file){
 		if (file.match(/.mp3$/)){
 			var player = audioHTML(file, "true") + '<br />';
@@ -859,7 +859,7 @@ alert("Testing");
 			document.forms["audioFile"].submit()
 		}
 	}
-	
+
 	function checkAddAudioLink(link){
 		var field = document.getElementById("addAudioField").value;
 		link = link.replace("../", "").replace("./","");
@@ -874,7 +874,7 @@ alert("Testing");
 		document.forms["wordUpdateForm"].elements[field].value = link;
 		document.forms["wordUpdateForm"].submit();
 	}
-	
+
 	function newAudioFolder(){
 		var current = document.getElementById("currentFolder").value.replace(/\/$/,"")+ '/';
 		var currentPretty = current.replace(/^[.][.]\//,"").replace(/^[.]\//,"");
@@ -889,7 +889,7 @@ alert("Testing");
 		document.write(form);
 		document.forms["newAudioFolderForm"].submit()
 	}
-	
+
 		// Confirms that uploading file might replace existing file
 	function confirmReplaceAudio(){
 		var confirmation = confirm("If a file already exists with the same name as this uploaded file, it will be replaced. Continue?");
@@ -898,11 +898,11 @@ alert("Testing");
 		}
 	}
 //}
-/****** Admin - Words ****************************************************/ //{ 
+/****** Admin - Words ****************************************************/ //{
 	// displays the word list table
 	function wordTable(multipleDelete){
 		slideWords();
-		var listField = selectFieldList();		
+		var listField = selectFieldList();
 		var table = '<div id="wordtable"><table id="cardList"><form method="post" id="deleteWordForm">';
 		if (words > 0){
 			for (var i = 1; i <= words; i++){
@@ -918,7 +918,7 @@ alert("Testing");
 		document.getElementById("wordsForm").innerHTML = table;
 		wordInterfaceHTML(multipleDelete);
 	}
-	
+
 	function selectFieldList(){
 		if (document.getElementById("selectCardList")){
 			return document.getElementById("selectCardList").value;
@@ -944,7 +944,7 @@ alert("Testing");
 		document.write(form)
 		document.forms["addWordForm"].submit();
 	}
-	
+
 	// Confirms deletion of an word
 	function confirmDeleteWord(){
 		var checkedvalue = getRadioValue("deleteWordForm", "deleteWord");
@@ -955,7 +955,7 @@ alert("Testing");
 			document.forms["deleteWordForm"].submit();
 		}
 	}
-	
+
 	function wordInterfaceHTML(multipleDelete){
 		var wordinterface = '<button type="button" onclick="addWord()">Add New Word</button>'
 		wordinterface += '<button type="button" onclick="confirmDeleteWord()">Delete Current Word</button>';
@@ -965,7 +965,7 @@ alert("Testing");
 			wordinterface += '<button type="button" onclick="wordTable(1)">Select Multiple Words to Delete</button>';
 		document.getElementById("wordinterface").innerHTML = wordinterface;
 	}
-	
+
 	function confirmDeleteMulipleWords(){
 		var checkedvalues = getCheckedValues("deleteWordForm", "deleteMultipleWords");
 		var txtarray = "";
@@ -990,7 +990,7 @@ alert("Testing");
 		return false;
 	}
 //}
-/****** jQuery functions *************************************************/ //{ 
+/****** jQuery functions *************************************************/ //{
 	$(document).ready(function(){
 		$("#slideAudio").click(function(){
 			if ($("#audio").css("display") == "block"){
@@ -1005,7 +1005,7 @@ alert("Testing");
 				$("#audio").slideToggle("slow");
 			}
 		});
-		
+
 		$("#slidePrototype").click(function(){
 			if ($("#prototypeTable").css("display") == "block"){
 				$("#prototypeTable").slideToggle("slow", function(){
@@ -1019,25 +1019,25 @@ alert("Testing");
 				$("#prototypeTable").slideToggle("slow");
 			}
 		});
-		
+
 		$("#slideFlashcard").click(function(){
 			$("#flashcards").slideToggle("slow");
 		});
-		
+
 		$("#slideWordsList").click(function(){
 			if (event.target.nodeName.toLowerCase() == "p")
 				$("#wordsForm").slideToggle("slow");
 		});
-		
+
 		$("#slideXMLFiles").click(function(){
 			$("#xml").slideToggle("slow");
 		});
-		
+
 		$("#slideWordEdit").click(function(){
 			$("#wordEditForm").slideToggle("slow");
 		});
 	});
-	
+
 	function slideAudio(){
 		//default is non slide
 		$(document).ready(function(){
@@ -1046,34 +1046,34 @@ alert("Testing");
 			$("#audio").show();
 		});
 	}
-	
+
 	function slidePrototype(){
 		$(document).ready(function(){
 			$("#wordedit").css("max-height","50%")
 			$("#prototypeTable").show();
 		});
 	}
-	
+
 	function slideWords(){
 		$(document).ready(function(){
 			$("#wordsForm").show();
 		});
 	}
-	
+
 	function slideUploadXML(){
 		$(document).ready(function(){
 			$("#showUploadXML").hide();
 			$("#uploadFileForm").slideDown();
 		});
 	}
-	
+
 	function slideUploadAudio(){
 		$(document).ready(function(){
 			$("#showUploadAudio").hide();
 			$("#uploadAudioForm").slideDown();
 		});
 	}
-	
+
 	//if (getplatform() == "android")
 //}
 /****** Miscellaneous/Defunct ********************************************/ //{
@@ -1089,7 +1089,7 @@ alert("Testing");
             }
             return false;
         }
-		
+
 		// Gets returns the platform of the device
 		function getplatform(){
 			switch(navigator.platform){
@@ -1103,7 +1103,7 @@ alert("Testing");
 					return "desktop";
 			}
 		}
-		
+
 		// Strips whitespace from the beginning and the end of text
 		function strip(str){
 			var len = str.length;
@@ -1117,7 +1117,7 @@ alert("Testing");
 				end--;
 			return str.slice(start, end+1);
 		}
-		
+
 		function getLocation(){
 			var loc = location.pathname.match(/\/\w*\/\w*[.]\w*/);
 			if (loc){
@@ -1129,15 +1129,15 @@ alert("Testing");
 				foldername = location.pathname.match(/\/\w*\/$/)[0].replace(/\//g,"");
 			}
 		}
-		
+
 		function checkHebrew(){
 			isHebrew = true;
 			if (foldername.length < 5)
 				isHebrew = false;
-			else if (foldername.slice(0,5).toUpperCase() != "HEBREW") 
+			else if (foldername.slice(0,5).toUpperCase() != "HEBREW")
 				isHebrew = false;
 		}
-		
+
 		function getParameterByName(name, path){
 		  name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
 		  var regexS = "[\\?&]" + name + "=([^&#]*)";

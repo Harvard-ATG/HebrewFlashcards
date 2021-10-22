@@ -1,12 +1,20 @@
+log("Testing Site");
+initJQuery(false);
+
+
 /****** Global Variables for Flashcards **********************************/ //{
-		var baseURL = 'http://hebrew-flashcards.localhost/'; // base url to flashcards directory
+		// var baseURL = 'http://www.fas.harvard.edu/~atgproject/flashcards/';
+		var baseURL = '/~atgproject/flashcards/';
 		var filename = ''; // current page file name
 		var foldername = ''; // current page's directory name
 		getLocation();
-		
+
 		var isHebrew = undefined; // whether or not current page is for Hebrew classes
 		checkHebrew();
-		
+
+		var mediaFields = new Array();
+		getMediaFields();
+
 		var xmlDoc = undefined; //xml Document open
 		var title = ''; // set page title
 		var primary = '';
@@ -16,12 +24,9 @@
 		var cardFields = new Array(); // the structure of the cards
 		var colorSupport = true;
 		getPrototype();
-		
-		var mediaFields = new Array();
-		getMediaFields();
-		
+
 		var results = new Array();
-		
+
 		document.getElementsByTagName("head")[0].innerHTML += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />';
 		var pagetitle = title;
 		if (filename == "admin.cgi"){
@@ -29,23 +34,56 @@
 		}
 		document.getElementsByTagName("head")[0].innerHTML += "<title>"+pagetitle+"</title>";
 		document.write('<div id="header"><h1>'+pagetitle+'</h1></div>');
-		
+
 		var xmlFiles = new Array(); // array of xml filenames
 		var words = 0; //number of words in set of flashcards
         var word = 1;  // current word number
 		var weekFile = '';  // filename of current set
 		var weekName = '';  // display name of current set
-//}	
+
+	function loadScript(url)
+	{
+		var script     = document.createElement('script');
+		script.src = url;
+
+		var head = document.getElementsByTagName('head')[0],
+		done = false;
+		script.onload = script.onreadystatechange = function() {
+			if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
+				done = true;
+			};
+		};
+		head.appendChild(script);
+	}
+
+	function initJQuery(jQueryScriptOutputted)
+	{
+	    if (typeof(jQuery) == 'undefined')
+	    {
+	        if (!jQueryScriptOutputted)
+	        {
+				loadScript("https://code.jquery.com/jquery-1.9.1.js");
+				loadScript("https://code.jquery.com/ui/1.10.3/jquery-ui.js");
+	        }
+	        setTimeout("initJQuery(true)", 50);
+	    }
+	    else
+	    {
+	    	$(readyFunction);
+	    }
+}
+
+//}
 /****** Setup ************************************************************/ //{
 	//initializes the flashcards
     function initialize(){
 		getLocation();
 		getPrototype();
-		//getXMLFileNames();  
-		
+		//getXMLFileNames();
+
 		var table = '<center><table id="card"></table><div id="changeCardInterface"></div></center>';
 		document.getElementById("flashcards").innerHTML = table + document.getElementById("flashcards").innerHTML;
-		
+
 		// Display radio button that selects field to hide
 		selectWeek();
 		selectHidden();
@@ -58,7 +96,7 @@
 		}
 		// *****TODO*******: Fix Bug with selectHidden() when the website is first opened
 	}
-	
+
 	//Get xml filenames from mapfile and display dropdown list of weeks
 	function getXMLFileNames(){
 		xmlFiles = new Array();
@@ -67,7 +105,7 @@
 		for (var i = 0; i < itemnum; i++)
 			xmlFiles.push(xmlDoc.getElementsByTagName("xml")[i].childNodes[0].nodeValue);
 	}
-	
+
 	// Get card prototype
 	function getPrototype(){
 		xmlDoc = openXMLPrecise("xml/prototype.xml");
@@ -85,7 +123,7 @@
 			cardFields.push(field);
 		}
 	}
-	
+
 	function getMediaFields(){
 		mediaFields = new Array();
 		var master = openXMLPrecise("../scripts/master.xml");
@@ -94,7 +132,7 @@
 			mediaFields.push(master.getElementsByTagName("media")[i].childNodes[0].nodeValue);
 	}
 //}
-/****** Flashcard Interface **********************************************/ //{ 
+/****** Flashcard Interface **********************************************/ //{
 	// diplays word info on flashcards; returns # of rows in interface
 	function displayWordInfo(){
 		var cardColor = getField("color");
@@ -113,49 +151,51 @@
 			currentrow = displayField(cardFields[i], currentrow, cardColor);
 		return currentrow;
 	}
-	
+
 	// refreshes/updates flashcards with new info, settings, or changes
 	function refresh(){
 		for (var i = document.getElementById("card").rows.length - 1; i >=0; i--)
-			deleterow(i);	
+			deleterow(i);
 		var numrows = displayWordInfo();
 		if (word <= words)
 			displayChangeCardInterface(numrows);
 	}
 //}
-/****** Retrieve Data from XML *******************************************/ //{		
+/****** Retrieve Data from XML *******************************************/ //{
 	// open xml file relative to parent directory
 	function openXML(xml){
 		return openXMLPrecise("../" + xml);
 	}
-	
+
 	function openXMLPrecise(xml){
 	  // code for IE7+, Firefox, Chrome, Opera, Safari
 	  if (window.XMLHttpRequest)
 		xmlhttp=new XMLHttpRequest();
 	  // code for IE6, IE5
-	  else 
+	  else
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  // adds random ending to force browswer to reload xml
 	  xmlhttp.open("GET",xml + "?nocache=" + new Date().getTime(),false);
 	  xmlhttp.send();
-	  return xmlhttp.responseXML;	
+	  return xmlhttp.responseXML;
 	}
-			
+
 	// Checks whether a field has a value
-	function getField(field){
-		var value = getWordInfo(field);
+	function getField(field, wordnum){
+		var value = $.trim(getWordInfo(field, wordnum));
 		if (value.match(/\S/gi) == null)
 			return "";
 		return value;
 	}
-	
+
 	// gets word info from xml document
-	function getWordInfo(info){
-	  if (word <= words){
-		  if (xmlDoc.getElementsByTagName("word")[word-1].getElementsByTagName(info).length > 0){
-			if (xmlDoc.getElementsByTagName("word")[word-1].getElementsByTagName(info)[0].childNodes.length > 0)
-			  return xmlDoc.getElementsByTagName("word")[word-1].getElementsByTagName(info)[0].childNodes[0].nodeValue;
+	function getWordInfo(info, wordnum){
+	  if(wordnum === undefined)
+	  	wordnum = word;
+	  if (wordnum <= words){
+		  if (xmlDoc.getElementsByTagName("word")[wordnum-1].getElementsByTagName(info).length > 0){
+			if (xmlDoc.getElementsByTagName("word")[wordnum-1].getElementsByTagName(info)[0].childNodes.length > 0)
+			  return xmlDoc.getElementsByTagName("word")[wordnum-1].getElementsByTagName(info)[0].childNodes[0].nodeValue;
 		  }
 	  }
 	  return "";
@@ -171,15 +211,15 @@
 	  else if (wordnum > words)
 		word = 1;
 	  else
-		word = wordnum; 
+		word = wordnum;
 	  refresh();
 	  if (document.getElementById("wordedit")){
 		wordEditTable();
 		recheckForms();
 	  }
 	}
-//}   
-/****** Week Interface ***************************************************/ //{ 
+//}
+/****** Week Interface ***************************************************/ //{
 	// dropdown for select flashcard set
 	function selectWeek(id) {
 	  if (id === undefined)
@@ -229,7 +269,7 @@
 		  }
 	    }
 	  }
-	  document.getElementById(id).innerHTML += dropdown + '</select><br />';		  
+	  document.getElementById(id).innerHTML += dropdown + '</select><br />';
 	}
 
 	// sets flashcard set, opens xml document, and reinitializes globals
@@ -253,8 +293,8 @@
 		}
 	  }
 	}
-	
-	// takes in a file path ('test/xml/Week1.xml') 
+
+	// takes in a file path ('test/xml/Week1.xml')
 	// and returns name ('test: Week1')
 	function getWeekName(weekFile){
 		return weekFile.replace("/xml/", ": ").replace(".xml", "");
@@ -266,18 +306,18 @@
 		return foldername + '/xml/' + localfile;
 	}
 //}
-/****** Hidden Interface *************************************************/ //{ 
+/****** Hidden Interface *************************************************/ //{
 	// radio button for selecting which field to hide
 	function selectHidden(id){
 	  if (id === undefined)
 		id = "flashcards";
 	  var radio = '<label><b>Hide:</b></label><input type="radio" name="hiddeninfo" value="' + info + '"' +
 		'onchange="setHidden(this.value)" class="bigButton">'+info.toUpperCase()+'</input>' +
-		'<input type="radio" name="hiddeninfo" value="'+hidden+'" checked="checked"' + 
+		'<input type="radio" name="hiddeninfo" value="'+hidden+'" checked="checked"' +
 		'onchange="setHidden(this.value)" class="bigButton">'+hidden.toUpperCase()+'</input><br />';
 		document.getElementById(id).innerHTML += radio;
 	}
-	
+
 	// sets hidden field
 	function setHidden(hiddeninfo){
 	  if (hidden != hiddeninfo)
@@ -287,15 +327,15 @@
 		refresh();
 	}
 //}
-/****** Search ***********************************************************/ //{ 
+/****** Search ***********************************************************/ //{
 	function enterSearch(id){
 		if (id === undefined)
 			id = "flashcards";
 		var input = '<button type="button" onclick="executeSearch()">Search</button>';
-		input += '<input name="searchText" type="text" id="searchText" onchange="executeSearch(this.value)" /><br /><div id="searchResults"></div>';
+		input += '<input name="searchText" type="text" id="searchText" onchange="executeSearch(this.value)" placeholder="Enter text here to search" /><br /><div id="searchResults"></div>';
 		document.getElementById(id).innerHTML += input;
 	}
-	
+
 	function executeSearch(){
 		document.getElementById("searchResults").innerHTML = "";
 		var text = document.getElementById("searchText").value;
@@ -336,9 +376,9 @@
 		select = '<select onchange="openResult(this.value)"><option value="">' + counter + ' RESULTS FOUND!</option>'+ select + "</select>";
 	    document.getElementById("searchResults").innerHTML = select;
 	}
-	
-	
-	
+
+
+
 	function searchResult(weekname, wordnum, field, value){
 		this.weekfile = getCurDirFilePath(weekname);
 		this.wordnum = wordnum + 1;
@@ -346,11 +386,11 @@
 		this.value = value;
 		this.toString = toString;
 	}
-	
+
 	function toString(){
 		return getWeekName(this.weekfile) + ", Word #"+ this.wordnum + ", " + this.field + ": " + this.value;
 	}
-	
+
 	function openResult(i){
 		if (i == "")
 			return false;
@@ -362,10 +402,15 @@
 	    // Displays a row in table based on the field and its value
 		function displayField(field, row, color, showHidden){
 			var value = strip(getField(field));
-			if (value == "" || isMedia(field, "color"))
+			if (value == "" || isMedia(field, "color") || isMedia(field, "answer"))
 				return row;
 			else if (field == hidden && showHidden != true)
-				insertrow(row, '<div class="mainCardRow"><button onclick="show('+row+');">Reveal ' + hidden.toUpperCase() + '</button></div>', color);
+			{
+				var rowHTML = '<div class="hiddenFieldRow"><input type="text" id="guess" value="" placeholder="Enter the answer here" onchange="guessCheck('+row+');"/>';
+				rowHTML += hidden.toUpperCase() + ': <button onclick="guessCheck('+row+');">Guess</button>';
+				rowHTML += '<button onclick="choose('+row+');">Choose</button><button onclick="show('+row+');">Reveal</button></div>';
+				insertrow(row, rowHTML, color);
+			}
 			else if (isMedia(field))
 				insertrow(row, mediaHTML(field, getAbsoluteURL(value)), color);
 			else if (field == info || field == hidden)
@@ -374,7 +419,7 @@
 				insertrow(row, value, color);
 			return row + 1;
 		}
-		
+
 		// add field to flashcard
         function insertrow(row, text, color){
 			if (!colorSupport)
@@ -400,17 +445,202 @@
 				cardColor = "00FFFF";
 			displayField(hidden, row, cardColor, true);
         }
+        function guessCheck(row){
+        	var input = $("#card tr:eq("+row+") input").length;
+        	if (!input)
+        	{
+        		var html = '<input type="text" id="guess" value="" placeholder="Enter the answer here" onchange=“guessCheck('+row+');"/>';
+        		$("#card tr:eq("+row+") select").replaceWith(html);
+        		return;
+        	}
+
+        	var answer = $("#card tr:eq("+row+") input").val().trim();
+        	if (answer.toLowerCase() == getGuess(hidden).toLowerCase())
+        	{
+        		$("#card tr:eq("+row+") input").css({"background-color":"#aaffaa"});
+        		$("#card tr:eq("+row+") input").css({"border-color":"green"});
+           		$("#card tr:eq("+row+") input").effect("shake", {"direction":"up", "times":4, "distance":5}, 1000, function(){
+           			$(".quickdisplay").remove();
+           		});
+           		$("#card tr:eq("+row+") input").after('<span style="color:green" class="quickdisplay">&#10004;</span>');
+           	}
+           	else
+           	{
+           		$("#card tr:eq("+row+") input").css({"background-color":"#ffaaaa"});
+           		$("#card tr:eq("+row+") input").css({"border-color":"red"});
+           		$("#card tr:eq("+row+") input").effect("shake", {"direction":"left", "times":4, "distance":5}, 1000, function(){
+           			$(".quickdisplay").remove();
+           		});
+           		$("#card tr:eq("+row+") input").after('<span style="color:red" class="quickdisplay">&#10006;</span>');
+           	}
+        }
+        function guess(row){
+		var rowHTML = '<select onchange="guessed('+row+', this.value)"><option value=""></option>';
+        	if (words < 5)
+        	{
+        		for (var i = 0; i < words; i++)
+        			rowHTML += '<option value="'+getGuess(hidden, i) +'">'+getGuess(hidden, i)+'</option>';
+        	}
+        	else
+        	{
+	        	var cardsArray = [];
+	        	var correctIndex = Math.round(Math.random() * 4);
+	        	for (var i = 0; i < 5; i++)
+	        	{
+	        		var value = getGuess(hidden);  // current answer if correct index
+	        		var cardnumber = word;
+	        		if (i != correctIndex)
+	        		{
+	        			do
+	        			{
+	        				cardnumber = Math.round(Math.random() * (words-1)) + 1;
+	        			}
+	        			while (cardsArray[String(cardnumber)] || cardnumber == word);
+	        			value = getGuess(hidden, cardnumber);
+	        		}
+	   				cardsArray[String(cardnumber)] = value;
+	       			rowHTML += '<option value="'+value +'">'+value+'</option>';
+	        	}
+	        }
+
+        	rowHTML += '</select>';
+        	var select = $("#card tr:eq("+row+") select").length;
+        	if (select)
+        		$("#card tr:eq("+row+") select").replaceWith(rowHTML);
+        	else
+        		$("#card tr:eq("+row+") input").replaceWith(rowHTML);
+        }
+        function guessed(row, selected)
+        {
+			if (selected.toLowerCase() == getGuess(hidden).toLowerCase())
+        	{
+        		$("#card tr:eq("+row+") select").css({"background-color":"#aaffaa"});
+        		$("#card tr:eq("+row+") select").css({"border-color":"green"});
+           		$("#card tr:eq("+row+") select").effect("shake", {"direction":"up", "times":4, "distance":5}, 1000, function(){
+           			$(".quickdisplay").remove();
+           		});
+           		$("#card tr:eq("+row+") select").after('<span style="color:green" class="quickdisplay">&#10004;</span>');
+           	}
+           	else
+           	{
+           		$("#card tr:eq("+row+") select").css({"background-color":"#ffaaaa"});
+           		$("#card tr:eq("+row+") select").css({"border-color":"red"});
+           		$("#card tr:eq("+row+") select").effect("shake", {"direction":"left", "times":4, "distance":5}, 1000, function(){
+           			$(".quickdisplay").remove();
+           		});
+           		$("#card tr:eq("+row+") select").after('<span style="color:red" class="quickdisplay">&#10006;</span>');
+           	}
+        }
+
+
+        function choose(row)
+        {
+        	var rowHTML = '<select onchange="chose('+row+', this.value)"><option value=""></option>';
+        	if (words < 5)
+        	{
+        		for (var i = 0; i < words; i++)
+        			rowHTML += '<option value="'+getAnswer(hidden, i) +'">'+ getAnswer(hidden, i)+'</option>';
+        	}
+        	else
+        	{
+	        	var cardsArray = [];
+	        	var correctIndex = Math.round(Math.random() * 4);
+	        	for (var i = 0; i < 5; i++)
+	        	{
+	        		var value = getAnswer(hidden);  // current answer if correct index
+	        		var cardnumber = word;
+	        		if (i != correctIndex)
+	        		{
+	        			do
+	        			{
+	        				cardnumber = Math.round(Math.random() * (words-1)) + 1;
+	        			}
+	        			while (cardsArray[String(cardnumber)] || cardnumber == word);
+	        			value = getAnswer(hidden, cardnumber);
+	        		}
+	   				cardsArray[String(cardnumber)] = value;
+	       			rowHTML += '<option value="'+value +'">'+value+'</option>';
+	        	}
+	        }
+
+        	rowHTML += '</select>';
+        	var select = $("#card tr:eq("+row+") select").length;
+        	if (select)
+        		$("#card tr:eq("+row+") select").replaceWith(rowHTML);
+        	else
+        		$("#card tr:eq("+row+") input").replaceWith(rowHTML);
+        }
+
+        function chose(row, selected)
+        {
+        	if (selected.toLowerCase() == getAnswer(hidden).toLowerCase())
+        	{
+        		$("#card tr:eq("+row+") select").css({"background-color":"#aaffaa"});
+        		$("#card tr:eq("+row+") select").css({"border-color":"green"});
+           		$("#card tr:eq("+row+") select").effect("shake", {"direction":"up", "times":4, "distance":5}, 1000, function(){
+           			$(".quickdisplay").remove();
+           		});
+           		$("#card tr:eq("+row+") select").after('<span style="color:green" class="quickdisplay">&#10004;</span>');
+           	}
+           	else
+           	{
+           		$("#card tr:eq("+row+") select").css({"background-color":"#ffaaaa"});
+           		$("#card tr:eq("+row+") select").css({"border-color":"red"});
+           		$("#card tr:eq("+row+") select").effect("shake", {"direction":"left", "times":4, "distance":5}, 1000, function(){
+           			$(".quickdisplay").remove();
+           		});
+           		$("#card tr:eq("+row+") select").after('<span style="color:red" class="quickdisplay">&#10006;</span>');
+           	}
+        }
+
+    	function getGuess(field, wordnum)
+    	{
+    		for (var i in cardFields){
+
+				if ((cardFields[i] == "answer"+field) || (cardFields[i] == "answer-"+field))
+				{
+					var answerField = getField(cardFields[i], wordnum);
+					if (answerField)
+					{
+						return answerField;
+					}
+				}
+				else if (cardFields[i] == "answer")
+				{
+					var answerField = getField(cardFields[i], wordnum);
+					if (answerField)
+					{
+						return answerField;
+					}
+				}
+
+			}
+			return getField(field, wordnum);
+    	}
 
 		// displays interfaces for switching between cards
 		function displayChangeCardInterface(row){
-			var changeCardInterface = 'Word #<input size="2" maxlength="3" type="text" value='+ 
-				word + ' onchange="jumpToWord(Number(this.value));" />/' + words + 
+			var changeCardInterface = 'Word #<input size="2" maxlength="3" type="text" value='+
+				word + ' onchange="jumpToWord(Number(this.value));" />/' + words +
 				'<br /><button onclick="jumpToWord(1);">l\<\<</button><button onclick="jumpToWord(word-1);">\<\<</button>' +
 				'<button onclick="jumpToWord();">Random</button>' +
 				'<button onclick="jumpToWord(word+1);">\>\></button><button onclick="jumpToWord(words);">\>\>l</button>';
 			document.getElementById("changeCardInterface").innerHTML = changeCardInterface;
 		}
 //}
+	function getAnswer(field, wordnum)
+    	{
+    		for (var i in cardFields){
+				if (cardFields[i] == "answer")
+				{
+					var answerField = getField(cardFields[i], wordnum);
+					if (answerField)
+						return answerField
+				}
+			}
+			return getField(field, wordnum);
+    	}
+
 /****** Media ****************************************************/ //{
 		function mediaHTML(field, url){
 			switch(isMedia(field)){
@@ -422,9 +652,11 @@
 					return mediaLabel(field) + videoHTML(url);
 				case "color":
 					return "";
+				case "answer":
+					return "";
 			}
 		}
-		
+
 		function mediaLabel(fieldname){
 			if (fieldname.length == 5)
 				return "";
@@ -433,13 +665,21 @@
 			else
 				return fieldname.slice(5) + ': ';
 		}
-		
+
 		// plays audiofile if one exist for words
 		function audioHTML(audio, autoplay){
 			if (autoplay === undefined)
 				autoplay = "false";
-			var platform = getplatform();
 			var type = getMIMEType(audio);
+
+			// this is HTML5 Audio added September 22, 2017
+		    return '<audio controls>' +
+                   	'<source src="' + audio + '" type="audio/mp3">' +
+                   	'<p>Your browser doesn\'t support HTML5 audio. Here is a <a href="' + audio + '">link to the audio</a> instead.</p>' +
+                   	'</audio>';
+
+	            // everything beyond this point in the method is really old and depricated
+			var platform = getplatform();
 			switch(platform){
 				case "android":
 					return '<a href="'+audio+'" target="audioiframe">Play Audio</a><br />';
@@ -466,7 +706,7 @@
 			}
 			return '<div style="font-size:20px;">No Audio File</div>';
 		}
-		
+
 		function imageHTML(url){
 			var platform = getplatform();
 			var width = '';
@@ -491,40 +731,40 @@
 				case "android":
 					if (!url.match(/youtube.com/gi))
 						return '<a href="' + url +'" target="videoiframe">Play Video</a>'
-					return '<iframe class="video" src="http://www.youtube.com/embed/'+ getParameterByName("v", url) +'?rel=0" frameborder="0" allowfullscreen>url</iframe>';
+					return '<iframe class="video" src="https://www.youtube.com/embed/'+ getParameterByName("v", url) +'?rel=0" frameborder="0" allowfullscreen>url</iframe>';
 				case "iOS":
 					//return '<iframe class="video" src="http://www.youtube.com/embed/'+ getParameterByName("v", url) +'?rel=0" frameborder="0" allowfullscreen>url</iframe>';
 					return '<a href="' + url +'" target="videoiframe">Play Video</a>';
 				default:
 					if (!url.match(/youtube.com/gi))
 						return '<video class="video" controls="controls" src="' + url + '"></video>';
-					return '<iframe class="video" src="http://www.youtube.com/embed/'+ getParameterByName("v", url) +'?rel=0" frameborder="0" allowfullscreen>url</iframe>';
+					return '<iframe class="video" src="https://www.youtube.com/embed/'+ getParameterByName("v", url) +'?rel=0" frameborder="0" allowfullscreen>url</iframe>';
 			}
 		}
-		
+
 		function getAbsoluteURL(url){
 			if (url.substr(0,4) == "www.")
-				url = "http://" + url;
-			else if (url.slice(0,7).toLowerCase() != "http://")
+				url = "https://" + url;
+			else if (url.slice(0,7).toLowerCase() != "https://")
 				url = baseURL + url;
 			return url;
 		}
-		
+
 		function isMedia(field, media){
-			var identifier = field.slice(0,5).toLowerCase()
 			if (media != undefined){
+				var identifier = field.slice(0,media.length).toLowerCase();
 				if (identifier == media)
 					return media;
 			}
 			else {
 				for (var i in mediaFields){
-					if (identifier == mediaFields[i])
+					if (isMedia(field, mediaFields[i]))
 						return mediaFields[i];
 				}
 			}
 			return false;
 		}
-		
+
 		function getMIMEType(url){
 			if (url.match(/.mp3$/))
 				return "audio/mpeg";
@@ -547,7 +787,7 @@
 	// Displays all of the xmlFiles used for Flashcards, based on mapfile
 	function drawTable(){
 		// Main Table
-		document.write('<table border="1" id="main"><tr><th>Files</th><th>Manage</th><th>Preview</th><th>Words</th></tr>' + 
+		document.write('<table border="1" id="main"><tr><th>Files</th><th>Manage</th><th>Preview</th><th>Words</th></tr>' +
 			'<tr><td class="cell"><div id="files"><p class="slide" id="slideXMLFiles">Browse XML</p><div id="xml" class="panel"></div>' +
 			'<p id="slideAudio" class="slide">Browse Audio</p><div class="panel" id="audio"></div></div></td>' +
 			'<td class="cell"><div id="manage"><div id="wordedit"><p class="slide" id="slideWordEdit">Edit Word:</p><div id="wordEditForm" class="panel"></div></div><div id="prototype" /></div></td>' +
@@ -561,7 +801,7 @@
 		setWeek(getCurDirFilePath(xmlFiles[0]));
 		//setWeek(xmlFiles[0].slice(0, xmlFiles[0].indexOf('.')));
 	}
-	
+
 	// Rechecks the xmlFile and word in the two tables
 	function recheckForms(){
 		for (var i = 0; i < xmlFiles.length; i++) {
@@ -580,7 +820,7 @@
 				document.getElementById("cardList").rows[word-1].style.backgroundColor = "#66FF00";
 			else
 				document.getElementById("cardList").rows[i].style.backgroundColor = "#7FFFD4";
-		}	
+		}
 	}
 
 	// retrieces the checkvalue for a form with radio buttons
@@ -591,7 +831,7 @@
 				return radioFiles[i].value;
 		}
 	}
-	
+
 	// retrieces the checkvalue for a form with radio buttons
 	function getCheckedValues(form, checkboxname){
 		var checkboxes = document.forms[form].elements[checkboxname];
@@ -602,22 +842,22 @@
 		}
 		return checked;
 	}
-//}	
-/****** Admin - XML Table ************************************************/ //{ 
+//}
+/****** Admin - XML Table ************************************************/ //{
 	// Displaces the list of xml file names
 	function xmlTable(){
 		getXMLFileNames();
-		var table = '<div id="xmltable"><table border="1" id="xmlFileList"><form method="post" id="deleteFileForm">';
+		var table = '<div id="xmltable"><form method="POST" id="deleteFileForm"><table border="1" id="xmlFileList">';
 		for (var i = 0; i < xmlFiles.length; i++) {
             //var name = xmlFiles[i].slice(0, xmlFiles[i].indexOf('.'));
 			var name = getCurDirFilePath(xmlFiles[i]);
 			table += "<tr><td><a href=\"xml/" + xmlFiles[i] + '" target="_blank">' + xmlFiles[i] + '</a></td><td>';
 			table += '<input type="radio" name="deleteFile" onchange="setWeek(this.value)" value="' + name + '" /></td></tr>';
 		}
-		table += '</form></table></div><div id="fileinterface"></div>';
+		table += '</table></form></div><div id="fileinterface"></div>';
 		document.getElementById("xml").innerHTML = table;
 	}
-	
+
 	function fileInterface(){
 		var fileinterface = 'Selected File: <button type="button" onclick="downloadXML()">Download</button>';
 		fileinterface += '<button type="button" onclick="confirmDeleteXML()">Delete</button>';
@@ -628,7 +868,7 @@
 		fileinterface += '<button type="button" onclick="confirmReplaceXML()">Upload</button></form>';
 		document.getElementById("fileinterface").innerHTML = fileinterface;
 	}
-	
+
 	function newXMLFile(){
 		var newfile = prompt("New XML File Name: ", ".xml");
 		if (newfile != "" && newfile != ".xml"){
@@ -646,12 +886,12 @@
 			document.forms["newFileForm"].submit();
 		}
 	}
-	
+
 	function downloadXML(){
 		var checkedvalue = getRadioValue("deleteFileForm", "deleteFile");
 		window.open(baseURL + "scripts/download.cgi?file=../" + checkedvalue, "_self");
 	}
-	
+
 	// Confirms deletion of an xml file
 	function confirmDeleteXML(){
 		var checkedvalue = getRadioValue("deleteFileForm", "deleteFile");
@@ -660,7 +900,7 @@
 			document.forms["deleteFileForm"].submit();
 		}
 	}
-	
+
 	// Confirms that uploading file might replace existing file
 	function confirmReplaceXML(){
 		var confirmation = confirm("If a file already exists with the same name as this uploaded file, it will be replaced. Continue?");
@@ -669,7 +909,7 @@
 		}
 	}
 //}
-/****** Admin - Manage (Word Edit) ***************************************/ //{ 
+/****** Admin - Manage (Word Edit) ***************************************/ //{
 	// Displays the word editing table
 	function wordEditTable(){
 		var table = 'Edit Word:<input type="text" readonly="readonly" value="' + weekName + ' - Word #' + word + '" />';
@@ -680,10 +920,13 @@
 			for (var i = 0; i < cardFields.length; i++){
 				fieldvalue = getWordInfo(cardFields[i]).replace(/"/g,'&quot;');
 				table += '<tr><td>';
+				var media = isMedia(cardFields[i]);
 				if (cardFields[i] == primary || cardFields[i] == secondary)
 					table += '<b>'+cardFields[i]+'</b> ';
-				else if (isMedia(cardFields[i]))
-					table += "<i>"+ cardFields[i].slice(0,5) + "</i>"+cardFields[i].slice(5);
+				else if (media)
+				{
+					table += "<i>"+ cardFields[i].slice(0,media.length) + "</i>"+cardFields[i].slice(media.length);
+				}
 				else
 					table += cardFields[i] + '</td>'
 				table += '<td><input type="text" name="' + cardFields[i] + '" value="' + fieldvalue + '" /></td></tr>';
@@ -692,13 +935,13 @@
 		else{
 			table += "<tr><td>No Word #" + word + "</td></tr>";
 		}
-		
-		table += '</table><input type="hidden" name="wordUpdate" value="true" /><input type="hidden" name="updateweek" value="' + 
+
+		table += '</table><input type="hidden" name="wordUpdate" value="true" /><input type="hidden" name="updateweek" value="' +
 		weekFile +'" /><input type="hidden" name="updateword" value="' + word +'" /><input type="submit" value="Update" /></form>';
 		document.getElementById("wordEditForm").innerHTML = table;
 	}
 //}
-/****** Admin - Manage (Prototype) ***************************************/ //{ 
+/****** Admin - Manage (Prototype) ***************************************/ //{
 	function prototypeTable(){
 		var table = '<p id="slidePrototype" class="slide">Modify Prototype</p>';
 		table += '<div class="panel" id="prototypeTable"><form method="post" id="deleteFieldForm"><table border="1"><tr><th>Position</th><th>Field</th></tr>';
@@ -710,12 +953,13 @@
 			if (i != cardFields.length -1)
 				table += '<button name="down" type="button" onclick="moveFieldDown(' + i + ')">&darr;</button>'
 			table += '</td><td>';
+			var media = isMedia(cardFields[i]);
 			if (cardFields[i] == primary)
 				table += '<b>primary:</b> ';
 			else if (cardFields[i] == secondary)
 				table += '<b>secondary:</b> ';
-			if (isMedia(cardFields[i])){
-				table += "<i>"+ cardFields[i].slice(0,5) + "</i>"+cardFields[i].slice(5);
+			if (media){
+				table += "<i>"+ cardFields[i].slice(0,media.length) + "</i>"+cardFields[i].slice(media.length);
 			}
 			else
 				table += cardFields[i];
@@ -728,12 +972,12 @@
 		table += '<button type="button" onclick="setSecondary()">Set as Secondary Field</button></div>';
 		document.getElementById("prototype").innerHTML = table;
 	}
-	
+
 	function moveFieldDown(fieldnumber){
 		document.write('<form method="post" name="moveFieldDownForm"><input type="hidden" name="fieldDown" value="' + fieldnumber + '" /></form>')
 		document.forms["moveFieldDownForm"].submit()
 	}
-	
+
 	function addField(){
 		var newfield = prompt("New field: ");
 		if (newfield.match(/\s/g)){
@@ -752,7 +996,7 @@
 			document.forms["newFieldForm"].submit();
 		}
 	}
-	
+
 	function setSpecialField(specialfield){
 		//*****TODO***** disallow setting audio, video, etc as primary or secondary field
 		var text = '';
@@ -760,6 +1004,10 @@
 		var checkedvalue = getRadioValue("deleteFieldForm", "deleteField");
 		if (isMedia(cardFields[checkedvalue], "color")){
 			alert('You cannot set "color" as special field because it is not shown in card interface.  It only sets the background color of the card.')
+			return false;
+		}
+		else if (isMedia(cardFields[checkedvalue], "answer")){
+			alert('You cannot set "answer" as special field because it is hidden in card interface.  It only sets answer for text input for a field.')
 			return false;
 		}
 		if (specialfield == "primary"){
@@ -798,14 +1046,14 @@
 		document.write(form);
 		document.forms["setSpecialFieldsForm"].submit();
 	}
-	
+
 	function setPrimary(){
 		setSpecialField("primary");
 	}
 	function setSecondary(){
 		setSpecialField("secondary");
 	}
-	
+
 	function confirmDeleteField(){
 		var checkedvalue = getRadioValue("deleteFieldForm", "deleteField");
 		if (checkedvalue == undefined)
@@ -829,12 +1077,12 @@
 		}
 	}
 //}
-/****** Admin - Preview **************************************************/ //{ 
+/****** Admin - Preview **************************************************/ //{
 	function audioTable(){
 		var table = '<table border="0"><tr><td><div id="audioInterface"></div></td></tr><tr><td><div id="audioPlayer"></div></td></tr></table>';
 		document.getElementById("audio").innerHTML = table;
 	}
-	
+
 	function checkMP3(file){
 		if (file.match(/.mp3$/)){
 			var player = audioHTML(file, "true") + '<br />';
@@ -857,7 +1105,7 @@
 			document.forms["audioFile"].submit()
 		}
 	}
-	
+
 	function checkAddAudioLink(link){
 		var field = document.getElementById("addAudioField").value;
 		link = link.replace("../", "").replace("./","");
@@ -872,7 +1120,7 @@
 		document.forms["wordUpdateForm"].elements[field].value = link;
 		document.forms["wordUpdateForm"].submit();
 	}
-	
+
 	function newAudioFolder(){
 		var current = document.getElementById("currentFolder").value.replace(/\/$/,"")+ '/';
 		var currentPretty = current.replace(/^[.][.]\//,"").replace(/^[.]\//,"");
@@ -887,7 +1135,7 @@
 		document.write(form);
 		document.forms["newAudioFolderForm"].submit()
 	}
-	
+
 		// Confirms that uploading file might replace existing file
 	function confirmReplaceAudio(){
 		var confirmation = confirm("If a file already exists with the same name as this uploaded file, it will be replaced. Continue?");
@@ -896,12 +1144,12 @@
 		}
 	}
 //}
-/****** Admin - Words ****************************************************/ //{ 
+/****** Admin - Words ****************************************************/ //{
 	// displays the word list table
 	function wordTable(multipleDelete){
 		slideWords();
-		var listField = selectFieldList();		
-		var table = '<div id="wordtable"><table id="cardList"><form method="post" id="deleteWordForm">';
+		var listField = selectFieldList();
+		var table = '<div id="wordtable"><form method="POST" id="deleteWordForm"><table id="cardList">';
 		if (words > 0){
 			for (var i = 1; i <= words; i++){
 				word = i;
@@ -912,11 +1160,11 @@
 			}
 		}
 		word = 1;
-		table += '<input type="hidden" name="updateWeek" value='+ weekFile +' /></form></table></div><div id="wordinterface"></div>';
+		table += '<input type="hidden" name="updateWeek" value='+ weekFile +' /></table></form></div><div id="wordinterface"></div>';
 		document.getElementById("wordsForm").innerHTML = table;
 		wordInterfaceHTML(multipleDelete);
 	}
-	
+
 	function selectFieldList(){
 		if (document.getElementById("selectCardList")){
 			return document.getElementById("selectCardList").value;
@@ -942,7 +1190,7 @@
 		document.write(form)
 		document.forms["addWordForm"].submit();
 	}
-	
+
 	// Confirms deletion of an word
 	function confirmDeleteWord(){
 		var checkedvalue = getRadioValue("deleteWordForm", "deleteWord");
@@ -953,7 +1201,7 @@
 			document.forms["deleteWordForm"].submit();
 		}
 	}
-	
+
 	function wordInterfaceHTML(multipleDelete){
 		var wordinterface = '<button type="button" onclick="addWord()">Add New Word</button>'
 		wordinterface += '<button type="button" onclick="confirmDeleteWord()">Delete Current Word</button>';
@@ -963,7 +1211,7 @@
 			wordinterface += '<button type="button" onclick="wordTable(1)">Select Multiple Words to Delete</button>';
 		document.getElementById("wordinterface").innerHTML = wordinterface;
 	}
-	
+
 	function confirmDeleteMulipleWords(){
 		var checkedvalues = getCheckedValues("deleteWordForm", "deleteMultipleWords");
 		var txtarray = "";
@@ -988,8 +1236,8 @@
 		return false;
 	}
 //}
-/****** jQuery functions *************************************************/ //{ 
-	$(document).ready(function(){
+/****** jQuery functions *************************************************/ //{
+	function readyFunction(){
 		$("#slideAudio").click(function(){
 			if ($("#audio").css("display") == "block"){
 				$("#audio").slideToggle("slow", function(){
@@ -1003,7 +1251,7 @@
 				$("#audio").slideToggle("slow");
 			}
 		});
-		
+
 		$("#slidePrototype").click(function(){
 			if ($("#prototypeTable").css("display") == "block"){
 				$("#prototypeTable").slideToggle("slow", function(){
@@ -1017,25 +1265,25 @@
 				$("#prototypeTable").slideToggle("slow");
 			}
 		});
-		
+
 		$("#slideFlashcard").click(function(){
 			$("#flashcards").slideToggle("slow");
 		});
-		
+
 		$("#slideWordsList").click(function(){
 			if (event.target.nodeName.toLowerCase() == "p")
 				$("#wordsForm").slideToggle("slow");
 		});
-		
+
 		$("#slideXMLFiles").click(function(){
 			$("#xml").slideToggle("slow");
 		});
-		
+
 		$("#slideWordEdit").click(function(){
 			$("#wordEditForm").slideToggle("slow");
 		});
-	});
-	
+	}
+
 	function slideAudio(){
 		//default is non slide
 		$(document).ready(function(){
@@ -1044,34 +1292,34 @@
 			$("#audio").show();
 		});
 	}
-	
+
 	function slidePrototype(){
 		$(document).ready(function(){
 			$("#wordedit").css("max-height","50%")
 			$("#prototypeTable").show();
 		});
 	}
-	
+
 	function slideWords(){
 		$(document).ready(function(){
 			$("#wordsForm").show();
 		});
 	}
-	
+
 	function slideUploadXML(){
 		$(document).ready(function(){
 			$("#showUploadXML").hide();
 			$("#uploadFileForm").slideDown();
 		});
 	}
-	
+
 	function slideUploadAudio(){
 		$(document).ready(function(){
 			$("#showUploadAudio").hide();
 			$("#uploadAudioForm").slideDown();
 		});
 	}
-	
+
 	//if (getplatform() == "android")
 //}
 /****** Miscellaneous/Defunct ********************************************/ //{
@@ -1087,7 +1335,7 @@
             }
             return false;
         }
-		
+
 		// Gets returns the platform of the device
 		function getplatform(){
 			switch(navigator.platform){
@@ -1101,7 +1349,7 @@
 					return "desktop";
 			}
 		}
-		
+
 		// Strips whitespace from the beginning and the end of text
 		function strip(str){
 			var len = str.length;
@@ -1115,7 +1363,7 @@
 				end--;
 			return str.slice(start, end+1);
 		}
-		
+
 		function getLocation(){
 			var loc = location.pathname.match(/\/\w*\/\w*[.]\w*/);
 			if (loc){
@@ -1127,15 +1375,15 @@
 				foldername = location.pathname.match(/\/\w*\/$/)[0].replace(/\//g,"");
 			}
 		}
-		
+
 		function checkHebrew(){
 			isHebrew = true;
 			if (foldername.length < 5)
 				isHebrew = false;
-			else if (foldername.slice(0,5).toUpperCase() != "HEBREW") 
+			else if (foldername.slice(0,5).toUpperCase() != "HEBREW")
 				isHebrew = false;
 		}
-		
+
 		function getParameterByName(name, path){
 		  name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
 		  var regexS = "[\\?&]" + name + "=([^&#]*)";
@@ -1148,4 +1396,12 @@
 		  else
 			return decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
+
+		// Logs to Chrome Console
+	function log()
+	{
+		var isChrome = /chrome/i.test(navigator.userAgent);
+		if (isChrome)
+			console.log.apply(console, arguments);
+	}
 //}

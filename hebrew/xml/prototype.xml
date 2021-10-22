@@ -1,10 +1,11 @@
+<?xml version="1.0"?>
 <card>
-<title>Hebrew 130a Flashcards</title>
+<title>Hebrew 120 Fall Flashcards</title>
 <field>hebrew</field>
 <field>partofspeech</field>
 <field>gender</field>
 <field>english</field>
-<field>audio</field>
+<field>answer-hebrew</field>
 <primary>hebrew</primary>
 <secondary>english</secondary>
-</card>
+<field>audio</field></card>
