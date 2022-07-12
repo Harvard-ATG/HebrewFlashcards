@@ -1,28 +1,44 @@
 <?php @session_start();
+
+	require_once("../lib/domxml-php4-to-php5.php");
+
 	//clearBrowserCache();
-	header('Content-Type: text/html; charset=UTF-8'); 
+	header('Content-Type: text/html; charset=UTF-8');
 
 	// Logout: End Session and reload page
-	if(isset($_GET['logout']) && $_GET['logout'] == '1'){	
+	if($_GET['logout'] == '1'){
+		error_log('Logging out...');
 		logout();
 	}
-	
+
 	// YES, I know this is not secure at all, but it is quick
 	$_SESSION['passwords'] = array();
 	$_SESSION['passwords']['admin'] = "admin";
 	$_SESSION['passwords']['hebrew'] =  "hebrew";
-	//$_SESSION['passwords']['spanish'] =  "";
-	//$_SESSION['passwords']['french'] = "";
-	//$_SESSION['passwords']['test'] = "";
-	//$_SESSION['passwords']['tibet'] = "";
-	//$_SESSION['passwords']['turkish'] = "";
+	// $_SESSION['passwords']['spanish'] =  "";
+	// $_SESSION['passwords']['french'] = "";
+	// $_SESSION['passwords']['test'] = "";
+	// $_SESSION['passwords']['tibet'] = "";
+	// $_SESSION['passwords']['turkish'] = "";
 
 	$_SESSION['current'] = '';
-	$current_directory = basename(getcwd());
-	if($current_directory !== FALSE) {
-		$_SESSION['current'] = strtolower($current_directory);
-	} 
 
+	$current = '';
+	$cwd = strtoupper(getcwd());
+	if (strstr($cwd, "HEBREW"))
+		$current = 'hebrew';
+	else if (strstr($cwd, "SPANISH"))
+		$current = 'spanish';
+	else if (strstr($cwd, "FRENCH"))
+		$current = 'french';
+	else if (strstr($cwd, "TIBET"))
+		$current = 'tibet';
+	else if (strstr($cwd, "TEST"))
+		$current = 'test';
+	else
+		$current = 'test';
+
+	$_SESSION['current'] = $current;
 
 	// Checks if user is logged in, ask to login
 	function login(){
@@ -36,13 +52,12 @@
 				$_SESSION['pword'] = $_SESSION['passwords'][$_SESSION['current']];
 			}
 		}
-		$logged_in = isset($_SESSION['pword']) && $_SESSION['pword'] == $_SESSION['passwords'][$_SESSION['current']];
-		if(!$logged_in) {
+		if ($_SESSION['pword'] != $_SESSION['passwords'][$_SESSION['current']]){
 			echo('<form method="post"><label>Password: </label><input type="password" name="password" />' .
 					'<button type="submit">Submit</button></form><br /><br /><a href="index.html">Flashcards</a>');
 		}
 		// User is logged in:
-		else {
+		else if ($_SESSION['pword'] == $_SESSION['passwords'][$_SESSION['current']]){
 			/**********************************************
 			 * SERVER TASKS
 			 *********************************************/
@@ -54,11 +69,11 @@
 			if(isset($_FILES['newAudioFile'])){
 				uploadFile("newAudioFile","replace", $_POST["currentFolder"]);
 			}
-			
+
 			check("newXMLFile", "newFile"); // Create a New XML File
-			check("deleteFile", "deleteFile");	// Delete a File		
-			
-			
+			check("deleteFile", "deleteFile");	// Delete a File
+
+
 			check("updateXML", "updateword"); // Update a Word
 			check("addWordToWeek", "addWordToWeek");  // Add Word
 			check("deleteWord", "deleteWord"); // Delete a Word
@@ -73,14 +88,14 @@
 			if ($_SESSION['tableDrawn'] == "false"){
 				javascript("drawTable()");
 			}
-			
+
 			checkEditAudio();
-			
+
 			echo('
 			<div class="footer"><a href="index.html">Flashcards</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="?logout=1">Logout</a></div>');
 		}
 	}
-	
+
 	function checkEditPrototype(){
 		$prototypeEdited = false;
 		$prototypeEdited = $prototypeEdited || check("moveFieldDown", "fieldDown"); // Rearrange prototype
@@ -91,7 +106,7 @@
 		if ($prototypeEdited)
 			javascript("slidePrototype()");
 	}
-	
+
 	function checkEditAudio(){
 		$audioEdited = false;
 		$audioEdited = $audioEdited || check("newAudioFolder", "newAudioFolder");
@@ -103,11 +118,8 @@
 
 /***************************************
  * General Setup
- **************************************/	
+ **************************************/
 	function initializePHP(){
-		if (PHP_VERSION >= '5') {
-			require_once('../lib/domxml-php4-to-php5.php');
-		}
 		// Acknowledge Current Session and Open Map File
 		$_SESSION['map'] = domxml_open_file("xml/map.xml");
 		$_SESSION['prototype'] = domxml_open_file("xml/prototype.xml");
@@ -115,7 +127,7 @@
 		getCardFieldsPHP();
 		$_SESSION['tableDrawn'] = "false";
 	}
-	
+
 	// Get card fields from prototype
 	function getCardFieldsPHP(){
 		$fields = $_SESSION['prototype']->get_elements_by_tagName("field");
@@ -125,8 +137,8 @@
 			array_push($_SESSION['cardFields'], $fieldname);
 		}
 	}
-	
-	//Get xml filenames from mapfile	
+
+	//Get xml filenames from mapfile
 	function getXMLFileNamesPHP(){
 		$files = $_SESSION['map']->get_elements_by_tagName("xml");
 		$_SESSION['xmlFiles'] = array();
@@ -135,28 +147,28 @@
 			array_push($_SESSION['xmlFiles'], $filename);
 		}
 	}
-	
+
 	// checks POST/runs code if set
 	function check($func, $postvalue){
 		if (isset($_POST[$postvalue])){
 			//alert($func);
-			$func($_POST[$postvalue]); 
+			$func($_POST[$postvalue]);
 			unset($_POST[$postvalue]);
 			return true;
 		}
 		return false;
 	}
-	
+
 /***************************************
  * Manage - Word Edit
- **************************************/	
+ **************************************/
 	// updates XML of file when word has been changed
 	function updateXML($cardnum){
 		// retrieve and unset data from form
 		$week = $_POST['updateweek'];
 		$cardnum = (int)$cardnum;
 		unset($_POST['updateweek']);
-		
+
 		// open the corresponding XML file and select the specific card
 		$xmlFile = "../" . $week;
 		$xml = domxml_open_file($xmlFile);
@@ -169,7 +181,7 @@
             $root[0]->append_child($newNode);
 			$card = $cards[$numcards];
 		}
-		
+
 		// update each field of card, if neccessary
 		for ($i = 0; $i < count($_SESSION['cardFields']); $i++){
 			// Acquire new value for field
@@ -201,7 +213,7 @@
 		javascript('jumpToWord(' .$cardnum.')');
 		$_SESSION['tableDrawn'] = "true";
 	}
-	
+
 	function deleteWord($cardnum){
 		$week = $_POST['updateWeek'];
 		unset($_POST['updateWeek']);
@@ -217,7 +229,7 @@
 		javascript('jumpToWord(' .$cardnum.')');
 		$_SESSION['tableDrawn'] = "true";
 	}
-	
+
 	function deleteMultipleWords($wordTXTArray){
 		$week = $_POST['updateWeek'];
 		unset($_POST['updateWeek']);
@@ -234,7 +246,7 @@
 		javascript('setWeek("' .$week. '")');
 		$_SESSION['tableDrawn'] = "true";
 	}
-	
+
 	function addWordToWeek($week){
 		$xmlFile = "../". $week;
 		$xml = domxml_open_file($xmlFile);
@@ -249,10 +261,10 @@
 		javascript('jumpToWord(' .$numcards.')');
 		$_SESSION['tableDrawn'] = "true";
 	}
-	
+
 /***************************************
  * Manage - Prototype
- **************************************/	
+ **************************************/
 	function moveFieldDown($fieldnumber){
 		$fields = $_SESSION['prototype']->get_elements_by_tagName("field");
 		$bottomtext = $fields[$fieldnumber]->get_content();
@@ -277,7 +289,7 @@
 		$_SESSION['prototype']->dump_file("xml/prototype.xml", false, true);
 		getCardFieldsPHP();
 	}
-	
+
 	function deleteField($field){
 		if ($field >= count($_SESSION['cardFields']))
 			return false;
@@ -287,7 +299,7 @@
 		$_SESSION['prototype']->dump_file("xml/prototype.xml", false, true);
 		getCardFieldsPHP();
 	}
-	
+
 	function setSpecialField($newValue, $fieldname){
 		if ($_SESSION['prototype']->get_elements_by_tagName($fieldname)){
 			$field = $_SESSION['prototype']->get_elements_by_tagName($fieldname);
@@ -301,17 +313,17 @@
 		$_SESSION['prototype']->dump_file("xml/prototype.xml", false, true);
 		getCardFieldsPHP();
 	}
-	
+
 	function setPrimary($newValue){
 		setSpecialField($newValue, "primary");
 	}
-	
+
 	function setSecondary($newValue){
 		setSpecialField($newValue, "secondary");
 	}
 /***************************************
  * File manipulation
- **************************************/	
+ **************************************/
 	function newXMLFile($newfile){
 		if (!is_file("xml/" . newfile)){
 			$newXML = fopen("xml/" . $newfile, "w");
@@ -333,7 +345,7 @@
 		$root = $_SESSION['map']->get_elements_by_tagname('map');
 		$root[0]->append_child($newNode);
 		$_SESSION['map']->dump_file("xml/map.xml", false, true);
-		
+
 		getXMLFileNamesPHP();
 		javascript("drawTable()");
 		javascript('setWeek(foldername + "/xml/'.$newfile. '")');
@@ -345,7 +357,7 @@
 		// Alert an errorg if one has occured
 		if ($_FILES[$file]["error"] > 0){
 			if ($_FILES[$file]["error"] == 1){
-				$poidsMax = ini_get('post_max_size'); 
+				$poidsMax = ini_get('post_max_size');
 				alert("Unfortunately this file is too large to upload this way. Max File Size = '" . $poidsMax ."'.  Talk to a system administrator to upload file to server");
 				return false;
 			}
@@ -355,11 +367,11 @@
 		// If file is new, but an filename already exists on the server, alert user
 		else if($action != "replace" && file_exists($location . $_FILES[$file]["name"]))
 			javascript('alert("' . $_FILES[$file]["name"] . ' already exists. To update or replace this file, select Update/Replace instead of Upload");');
-			
+
 		// Upload file
 		else{
 			move_uploaded_file($_FILES[$file]["tmp_name"], $location . $_FILES[$file]["name"]);
-			
+
 			// If filename is not in mapfile, update mapfile
 			if (!in_array($_FILES[$file]["name"], $_SESSION['xmlFiles'], TRUE) && $location == "xml/"){
 				array_push($_SESSION['xmlFiles'], $_FILES[$file]["name"]);
@@ -370,10 +382,10 @@
                 $root[0]->append_child($newNode);
 				$_SESSION['map']->dump_file("xml/map.xml", false, true);
 			}
-			
+
 			// Give file worldwide reading access
 			chmod($location . $_FILES[$file]["name"], 0644);
-			javascript('alert("Uploaded: ' . $_FILES[$file]["name"] . '\n' . "Type: " . $_FILES[$file]["type"] . '\n' . 
+			javascript('alert("Uploaded: ' . $_FILES[$file]["name"] . '\n' . "Type: " . $_FILES[$file]["type"] . '\n' .
 				"Size: " . ($_FILES[$file]["size"] / 1024) . " Kb" . '\n' . "Stored in: " . $location. $_FILES[$file]["name"] .'");');
 		}
 		if ($location == "xml/"){
@@ -384,7 +396,7 @@
 		}
 		unset($_FILES['file']);
 	}
-	
+
 	// Remove the file requested to be deleted
 	function deleteFile($filename){
 		// Remove from mapfile
@@ -396,25 +408,25 @@
                 javascript('alert("Deleted File: ' . $filename . '")');
 			}
 		}
-			
+
 		// Resave modified map file and update the array of filenames
 		$_SESSION['map']->dump_file("xml/map.xml", false, true);
-		
+
 		// Delete file from server
 		unlink("../" . $filename);
-		
+
 		getXMLFileNamesPHP();
 	}
-	
+
 	function downloadFile($filename){
 		header("content-type: application/xhtml+xml");
 		header("content-disposition: attachment;filename=" . basename($filename));
 		echo file_get_contents($filename);
 	}
-	
+
 /***************************************
  * Preview - Audio
- **************************************/	
+ **************************************/
 	function audioFiles(){
 		if ($_SESSION['current'] != 'test')
 			return checkAudio('./audio/', false);
@@ -427,7 +439,7 @@
 		$content .= '</select>';
 		javascript('document.getElementById("audioInterface").innerHTML = \'' . $content . '\'');
 	}
-	
+
 	function checkAudio($path){
 		if (isset($_POST['week'])){
 			javascript('setWeek("' .$_POST['week'] . '")');
@@ -459,69 +471,69 @@
 			$newSelect .= '<button type="button" onclick="confirmReplaceAudio()">Upload</button></form>';
 			javascript('document.getElementById("audioInterface").innerHTML = \'' . $newSelect . '\'');
 		}
-	}	
-	
+	}
+
 	function newAudioFolder($path){
 		if (file_exists($path))
 			alert('That path already exists!');
 		else
 			mkdir($path, 0777);
 	}
-	
+
 	function findAudioFolders($directory = '..'){
 		$folders = array();
-		if($dirhandler = opendir($directory)) { 
-            while (($sub = readdir($dirhandler)) !== FALSE) { 
+		if($dirhandler = opendir($directory)) {
+            while (($sub = readdir($dirhandler)) !== FALSE) {
 				$path = $directory."/".$sub;
                 if ($sub == 'audio' && is_dir($path)) {
                     array_push($folders, $path);
 					//echo $path;
 					//echo "<br />";
                 }
-				else if(is_dir($path) && $sub != '.' && $sub != '..'){ 
-                    $folders = array_merge($folders, findAudioFolders($path)); 
+				else if(is_dir($path) && $sub != '.' && $sub != '..'){
+                    $folders = array_merge($folders, findAudioFolders($path));
                 }
-            } 
-            closedir($dirhandler); 
-        } 
-        return $folders; 
+            }
+            closedir($dirhandler);
+        }
+        return $folders;
 	}
 
 	function scan_dir($dir){
 		$contents = array();
-		if($dirhandler = opendir($dir)) { 
-            while (($sub = readdir($dirhandler)) !== FALSE) { 
+		if($dirhandler = opendir($dir)) {
+            while (($sub = readdir($dirhandler)) !== FALSE) {
 				if($sub != '.' && $sub != '..')
 					array_push($contents, $sub);
-			} 
-            closedir($dirhandler); 
+			}
+            closedir($dirhandler);
         }
 		return $contents;
 	}
-	
-	
+
+
 /***************************************
  * Miscealaneous/Defunct
- **************************************/	
+ **************************************/
 	function logout(){
 		unset($_POST['password']);
         unset($_SESSION['pword']);
 		session_destroy();
-        header("Location: admin.php");
+        header("Location: admin.cgi");
 	}
- 
-	// takes in a file path ('test/xml/Week1.xml') 
+
+	// takes in a file path ('test/xml/Week1.xml')
 	// and returns name ('Week1.xml')
 	// replaced with built in PHP "basename" function
 	function getLocalFileName($weekFile){
 		return preg_replace("/.*\//", "", $weekFile);
 	}
-	
+
 	// PHP function to write Javascript code
 	function javascript($code) {
 		echo("<script>" . $code . ";</script>\n");
-	}	
-	
+	}
+
 	function alert($text){
 		javascript('alert("' . $text . '")');
 	}
@@ -545,14 +557,14 @@
 				$content = substr($content, 0, $position) . substr($content, $p);
 				$p = $position;
 			}
-			$position = strpos($content, "\\", $p);	
+			$position = strpos($content, "\\", $p);
 		}
 		$f = fopen($file, "w");
 		fwrite($f, $content);
 		fclose($f);
 	}
-	
-	function prettyXML($xml) {  
+
+	function prettyXML($xml) {
 		 $i = 0;
 		 $xml = preg_replace('/\s{2,}/', " ", $xml);
 		 $len = strlen($xml);
@@ -578,7 +590,7 @@
 					$foundContent = false;
 				$tagend = strpos($xml, ">", $i);
 				$pretty .= substr($xml, $i, $tagend - $i + 1);
-				
+
 				// End Tag
 				if ($xml[$i+1] == "/" || $xml[$tagend - 1] == "/"){
 					$pretty .= "\n";
@@ -602,7 +614,7 @@
 		 }
 		 return $pretty;
 	}
-	
+
 	function clearBrowserCache() {
 		header("Pragma: no-cache");
 		header("Cache: no-cache");
