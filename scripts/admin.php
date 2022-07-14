@@ -1,6 +1,7 @@
 <?php @session_start();
 
 	require_once("../lib/domxml-php4-to-php5.php");
+	$config = require_once("../config/config.php");
 
 	//clearBrowserCache();
 	header('Content-Type: text/html; charset=UTF-8');
@@ -11,53 +12,34 @@
 		logout();
 	}
 
-	// YES, I know this is not secure at all, but it is quick
-	$_SESSION['passwords'] = array();
-	$_SESSION['passwords']['admin'] = "admin";
-	$_SESSION['passwords']['hebrew'] =  "hebrew";
-	// $_SESSION['passwords']['spanish'] =  "";
-	// $_SESSION['passwords']['french'] = "";
-	// $_SESSION['passwords']['test'] = "";
-	// $_SESSION['passwords']['tibet'] = "";
-	// $_SESSION['passwords']['turkish'] = "";
-
-	$_SESSION['current'] = '';
-
-	$current = '';
-	$cwd = strtoupper(getcwd());
-	if (strstr($cwd, "HEBREW"))
-		$current = 'hebrew';
-	else if (strstr($cwd, "SPANISH"))
-		$current = 'spanish';
-	else if (strstr($cwd, "FRENCH"))
-		$current = 'french';
-	else if (strstr($cwd, "TIBET"))
-		$current = 'tibet';
-	else if (strstr($cwd, "TEST"))
-		$current = 'test';
-	else
-		$current = 'test';
-
-	$_SESSION['current'] = $current;
+	// Lookup auth credentials for current directory
+	$dirname = strtolower(basename(getcwd()));
+	if(isset($config['auth'][$dirname])) {
+		$_SESSION['current'] = $dirname;
+	} else {
+		error_log("Admin credentials not configured for $dirname");
+		print("Admin credentials not configured for $dirname");
+		exit();
+	}
 
 	// Checks if user is logged in, ask to login
 	function login(){
 		if (isset($_POST['password'])){
 			$_SESSION['login'] = "false";
 			// Ask user to login if no already logged in
-			if($_POST['password'] != $_SESSION['passwords'][$_SESSION['current']] && $_POST['password'] != $_SESSION['passwords']['admin']){
+			if($_POST['password'] != $config['auth'][$_SESSION['current']] && $_POST['password'] != $config['auth']['admin']){
 				javascript('alert("Incorrect Password!");');
 			}
 			else{
-				$_SESSION['pword'] = $_SESSION['passwords'][$_SESSION['current']];
+				$_SESSION['pword'] = $config['auth'][$_SESSION['current']];
 			}
 		}
-		if ($_SESSION['pword'] != $_SESSION['passwords'][$_SESSION['current']]){
+		if ($_SESSION['pword'] != $config['auth'][$_SESSION['current']]){
 			echo('<form method="post"><label>Password: </label><input type="password" name="password" />' .
 					'<button type="submit">Submit</button></form><br /><br /><a href="index.html">Flashcards</a>');
 		}
 		// User is logged in:
-		else if ($_SESSION['pword'] == $_SESSION['passwords'][$_SESSION['current']]){
+		else if ($_SESSION['pword'] == $config['auth'][$_SESSION['current']]){
 			/**********************************************
 			 * SERVER TASKS
 			 *********************************************/
