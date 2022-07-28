@@ -46,10 +46,10 @@
 			initializePHP();
 			// Upload a File
 			if(isset($_FILES['file'])){
-				uploadFile("file", "replace");
+				uploadFile("file");
 			}
 			if(isset($_FILES['newAudioFile'])){
-				uploadFile("newAudioFile","replace", $_POST["currentFolder"]);
+				uploadFile("newAudioFile", $_POST["currentFolder"]);
 			}
 
 			check("newXMLFile", "newFile"); // Create a New XML File
@@ -334,8 +334,20 @@
 		$_SESSION['tableDrawn'] = "true";
 	}
 
+	// Validates that a filename only uses allowed characters and file extensions
+	function validateFilename($filename) {
+		return preg_match('/^\w+\.(mp3|xml)$/', $filename);
+	}
+
+	// Validates that an xml or audio path is constructed correctly.
+	function validateFilepath($path) {
+		$is_valid_audio_path = preg_match('/^\.\/audio\/\w+\/?$/', $path);
+		$is_valid_xml_path = $path == "xml/";
+		return $is_valid_audio_path || $is_valid_xml_path;
+	}
+
 	// Uploads a file, with action of either add or replace
-	function uploadFile($file, $action, $location = "xml/"){
+	function uploadFile($file, $location = "xml/"){
 		// Alert an errorg if one has occured
 		if ($_FILES[$file]["error"] > 0){
 			if ($_FILES[$file]["error"] == 1){
@@ -346,19 +358,33 @@
 			javascript('alert("Error: ' . $_FILES[$file]["error"] . '");');
 			return false;
 		}
-		// If file is new, but an filename already exists on the server, alert user
-		else if($action != "replace" && file_exists($location . $_FILES[$file]["name"]))
-			javascript('alert("' . $_FILES[$file]["name"] . ' already exists. To update or replace this file, select Update/Replace instead of Upload");');
-
 		// Upload file
 		else{
-			move_uploaded_file($_FILES[$file]["tmp_name"], $location . $_FILES[$file]["name"]);
+			$uploaded_file_name = $_FILES[$file]["name"];
+			error_log("Uploading file...");
+			error_log(var_export($_FILES[$file], 1));
+
+			// Validate filename
+			if(validateFilename($uploaded_file_name)) {
+				move_uploaded_file($_FILES[$file]["tmp_name"], $location . $uploaded_file_name);
+			} else {
+				error_log("Error: upload file name invalid: $uploaded_file_name");
+				javascript('alert("Error: Upload file name invalid. Only alphanumeric characters allowed in xml or mp3 filenames.");');
+				return false;
+			}
+
+			// Validate the filepath
+			if(validateFilepath($location)) {
+				error_log("Error: upload location invalid: $location");
+				javascript('alert("Error: Upload location invalid.");');
+				return false;
+			}
 
 			// If filename is not in mapfile, update mapfile
-			if (!in_array($_FILES[$file]["name"], $_SESSION['xmlFiles'], TRUE) && $location == "xml/"){
-				array_push($_SESSION['xmlFiles'], $_FILES[$file]["name"]);
+			if (!in_array($uploaded_file_name, $_SESSION['xmlFiles'], TRUE) && $location == "xml/"){
+				array_push($_SESSION['xmlFiles'], $uploaded_file_name);
 				$newNode = $_SESSION['map']->create_element("xml");
-				$newText = $_SESSION['map']->create_text_node($_FILES[$file]["name"]);
+				$newText = $_SESSION['map']->create_text_node($uploaded_file_name);
 				$newNode->append_child($newText);
 				$root = $_SESSION['map']->get_elements_by_tagname('map');
                 $root[0]->append_child($newNode);
@@ -366,14 +392,14 @@
 			}
 
 			// Give file worldwide reading access
-			chmod($location . $_FILES[$file]["name"], 0644);
-			javascript('alert("Uploaded: ' . $_FILES[$file]["name"] . '\n' . "Type: " . $_FILES[$file]["type"] . '\n' .
-				"Size: " . ($_FILES[$file]["size"] / 1024) . " Kb" . '\n' . "Stored in: " . $location. $_FILES[$file]["name"] .'");');
+			chmod($location . $uploaded_file_name, 0644);
+			javascript('alert("Uploaded: ' . $uploaded_file_name . '\n' . "Type: " . $_FILES[$file]["type"] . '\n' .
+				"Size: " . ($_FILES[$file]["size"] / 1024) . " Kb" . '\n' . "Stored in: " . $location. $uploaded_file_name .'");');
 		}
 		if ($location == "xml/"){
 			getXMLFileNamesPHP();
 			javascript("drawTable()");
-			javascript('setWeek(foldername + "/xml/'.$_FILES[$file]["name"]. '")');
+			javascript('setWeek(foldername + "/xml/'.$uploaded_file_name. '")');
 			$_SESSION['tableDrawn'] = "true";
 		}
 		unset($_FILES['file']);
@@ -433,6 +459,12 @@
 		}
 		if (!strstr($path, "/audio"))
 			return false;
+
+		// strip trailing slash since the code below assumes no trailing slash.
+		if($path[strlen($path)-1] == "/") {
+			$path = substr($path, 0, -1);
+		}
+
 		if(is_dir($path)){
 			$contents = scan_dir($path);
 			$newSelect = 'Current Folder: <br />'.preg_replace("/(^[.][.]|^[.]\/audio)[\/]*/", "", $path . "/");
@@ -456,10 +488,17 @@
 	}
 
 	function newAudioFolder($path){
-		if (file_exists($path))
+		error_log("newAudioFolder: $path");
+		if (file_exists($path)) {
 			alert('That path already exists!');
-		else
-			mkdir($path, 0777);
+		} else {
+			if(validateFilepath($path)) {
+				mkdir($path, 0777);
+			} else {
+				error_log("Invalid audio folder path: $path");
+				alert('Invalid file path. Must contain only alphanumeric characters (no spaces).');
+			}
+		}
 	}
 
 	function findAudioFolders($directory = '..'){
