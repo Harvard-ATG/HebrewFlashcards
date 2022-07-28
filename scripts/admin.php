@@ -374,7 +374,7 @@
 			}
 
 			// Validate the filepath
-			if(validateFilepath($location)) {
+			if(!validateFilepath($location)) {
 				error_log("Error: upload location invalid: $location");
 				javascript('alert("Error: Upload location invalid.");');
 				return false;
@@ -407,9 +407,18 @@
 
 	// Remove the file requested to be deleted
 	function deleteFile($filename){
+		if(!preg_match('/^\w+\/xml\/\w+\.xml$/', $filename)) {
+			error_log("Error: invalid file deletion request: $filename");
+			alert("Error: invalid file deletion request");
+			return false;
+		}
+
+		$localname = basename($filename);
+		$file_to_delete = "./xml/$localname";
+
 		// Remove from mapfile
 		$files = $_SESSION['map']->get_elements_by_tagname("xml");
-		$localname = basename($filename);
+
 		for ($i = 0; $i < count($files); $i++){
 			if($localname == $files[$i]->get_content()){
 				$files[$i]->unlink_node();
@@ -421,7 +430,8 @@
 		$_SESSION['map']->dump_file("xml/map.xml", false, true);
 
 		// Delete file from server
-		unlink("../" . $filename);
+		error_log("Permanently deleting file: $file_to_delete");
+		unlink($file_to_delete);
 
 		getXMLFileNamesPHP();
 	}
