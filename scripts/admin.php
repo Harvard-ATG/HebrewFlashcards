@@ -1,7 +1,7 @@
 <?php @session_start();
 
 	require_once("../lib/domxml-php4-to-php5.php");
-	$config = require_once("../config/config.php");
+	$CONFIG = require_once("../config/config.php");
 
 	//clearBrowserCache();
 	header('Content-Type: text/html; charset=UTF-8');
@@ -14,7 +14,7 @@
 
 	// Lookup auth credentials for current directory
 	$dirname = strtolower(basename(getcwd()));
-	if(isset($config['auth'][$dirname])) {
+	if(isset($CONFIG['auth'][$dirname])) {
 		$_SESSION['current'] = $dirname;
 	} else {
 		error_log("Admin credentials not configured for $dirname");
@@ -27,19 +27,19 @@
 		if (isset($_POST['password'])){
 			$_SESSION['login'] = "false";
 			// Ask user to login if no already logged in
-			if($_POST['password'] != $config['auth'][$_SESSION['current']] && $_POST['password'] != $config['auth']['admin']){
+			if($_POST['password'] != $CONFIG['auth'][$_SESSION['current']] && $_POST['password'] != $CONFIG['auth']['admin']){
 				javascript('alert("Incorrect Password!");');
 			}
 			else{
-				$_SESSION['pword'] = $config['auth'][$_SESSION['current']];
+				$_SESSION['pword'] = $CONFIG['auth'][$_SESSION['current']];
 			}
 		}
-		if ($_SESSION['pword'] != $config['auth'][$_SESSION['current']]){
+		if ($_SESSION['pword'] != $CONFIG['auth'][$_SESSION['current']]){
 			echo('<form method="post"><label>Password: </label><input type="password" name="password" />' .
 					'<button type="submit">Submit</button></form><br /><br /><a href="index.html">Flashcards</a>');
 		}
 		// User is logged in:
-		else if ($_SESSION['pword'] == $config['auth'][$_SESSION['current']]){
+		else if ($_SESSION['pword'] == $CONFIG['auth'][$_SESSION['current']]){
 			/**********************************************
 			 * SERVER TASKS
 			 *********************************************/
@@ -306,6 +306,51 @@
 /***************************************
  * File manipulation
  **************************************/
+
+	function isValidPath($path) {
+		$haystack = realpath($path);
+		$needle = FLASHCARDS_BASE_DIR;
+		// check that base dir is contained in the path
+		if($needle !== "" && strncmp($haystack, $needle, strlen($needle)) === 0) {
+			return true;
+		}
+		return false;
+	}
+
+	function isXMLFilePath($path) {
+		$haystack = realpath($path);
+		return strpos($haystack, "/xml/") !== FALSE;
+	}
+
+	function isValidFilename($filename) {
+		return preg_match('/^\w+\.(mp3|xml)$/', $filename);
+	}
+
+	function canWriteFolder($path) {
+		$path = realpath($path);
+		error_log("canWriteFolder? Checking path: $path");
+		if(!isValidPath($path)) {
+			return false;
+		}
+
+		$is_xml_folder = preg_match('/\/xml$/', $path);
+		$is_audio_folder = preg_match('/\/audio$/', $path);
+		$is_audio_sub_folder = preg_match('/\/audio\/\w+$/', $path);
+
+		$can_write_folder = $is_xml_folder || $is_audio_folder || $is_audio_sub_folder;
+		error_log("canWriteFolder? Result: " . var_export($can_write_folder,1));
+
+		return $can_write_folder;
+	}
+
+	function canReadFolder($path) {
+		$path = realpath($path);
+		if(!isValidPath($path)) {
+			return false;
+		}
+		return true;
+	}
+
 	function newXMLFile($newfile){
 		if (!is_file("xml/" . newfile)){
 			$newXML = fopen("xml/" . $newfile, "w");
@@ -334,18 +379,6 @@
 		$_SESSION['tableDrawn'] = "true";
 	}
 
-	// Validates that a filename only uses allowed characters and file extensions
-	function validateFilename($filename) {
-		return preg_match('/^\w+\.(mp3|xml)$/', $filename);
-	}
-
-	// Validates that an xml or audio path is constructed correctly.
-	function validateFilepath($path) {
-		$is_valid_audio_path = preg_match('/^\.\/audio\/\w+\/?$/', $path);
-		$is_valid_xml_path = $path == "xml/";
-		return $is_valid_audio_path || $is_valid_xml_path;
-	}
-
 	// Uploads a file, with action of either add or replace
 	function uploadFile($file, $location = "xml/"){
 		// Alert an errorg if one has occured
@@ -364,19 +397,19 @@
 			error_log("Uploading file...");
 			error_log(var_export($_FILES[$file], 1));
 
+			// Check that folder is valid
+			if(!canWriteFolder($location)) {
+				error_log("Error: upload location invalid: $location");
+				javascript('alert("Error: Upload location invalid.");');
+				return false;
+			}
+
 			// Validate filename
-			if(validateFilename($uploaded_file_name)) {
+			if(isValidFilename($uploaded_file_name)) {
 				move_uploaded_file($_FILES[$file]["tmp_name"], $location . $uploaded_file_name);
 			} else {
 				error_log("Error: upload file name invalid: $uploaded_file_name");
 				javascript('alert("Error: Upload file name invalid. Only alphanumeric characters allowed in xml or mp3 filenames.");');
-				return false;
-			}
-
-			// Validate the filepath
-			if(!validateFilepath($location)) {
-				error_log("Error: upload location invalid: $location");
-				javascript('alert("Error: Upload location invalid.");');
 				return false;
 			}
 
@@ -407,18 +440,26 @@
 
 	// Remove the file requested to be deleted
 	function deleteFile($filename){
-		if(!preg_match('/^\w+\/xml\/\w+\.xml$/', $filename)) {
-			error_log("Error: invalid file deletion request: $filename");
-			alert("Error: invalid file deletion request");
+		error_log("deleteFile: $filename");
+
+		// Note: the filename includes the course-specific folder,
+		// so we make it relative from the parent folder to resolve correctly:
+		//   Hebrew123/xml/Test.xml --> ../Hebrew123/xml/Test.xml
+		$path = realpath("../".$filename);
+		if(!isXMLFilePath($path)) {
+			error_log("Error: only allowed to delete xml files: $filename ($path)");
+			alert("Error: only allowed to delete xml files");
+			return false;
+		}
+		if(!canWriteFolder(dirname($path))) {
+			error_log("Error: delete file permission denied: $filename ($path)");
+			alert("Error: delete file permission denied");
 			return false;
 		}
 
-		$localname = basename($filename);
-		$file_to_delete = "./xml/$localname";
-
 		// Remove from mapfile
 		$files = $_SESSION['map']->get_elements_by_tagname("xml");
-
+		$localname = basename($filename);
 		for ($i = 0; $i < count($files); $i++){
 			if($localname == $files[$i]->get_content()){
 				$files[$i]->unlink_node();
@@ -430,16 +471,33 @@
 		$_SESSION['map']->dump_file("xml/map.xml", false, true);
 
 		// Delete file from server
-		error_log("Permanently deleting file: $file_to_delete");
-		unlink($file_to_delete);
+		error_log("deleteFile: permanently deleting file: $path");
+		unlink($path);
 
 		getXMLFileNamesPHP();
 	}
 
 	function downloadFile($filename){
+		$path = realpath($filename);
+		if(!isXMLFilePath($path)) {
+			error_log("Error: only allowed to download xml files: $filename ($path)");
+			alert("Error: only allowed to download xml files");
+			return false;
+		}
+		if(!canReadFolder(dirname($path))) {
+			error_log("Error: download file permission denied: $filename ($path)");
+			alert("Error: download file permission denied");
+			return false;
+		}
+		if(!file_exists($path)) {
+			error_log("Error: download file not found: $filename ($path)");
+			alert("Error: download file not found!");
+			return false;
+		}
+
 		header("content-type: application/xhtml+xml");
-		header("content-disposition: attachment;filename=" . basename($filename));
-		echo file_get_contents($filename);
+		header("content-disposition: attachment;filename=" . basename($path));
+		echo file_get_contents($path);
 	}
 
 /***************************************
@@ -502,7 +560,7 @@
 		if (file_exists($path)) {
 			alert('That path already exists!');
 		} else {
-			if(validateFilepath($path)) {
+			if(canWriteFolder($path)) {
 				mkdir($path, 0777);
 			} else {
 				error_log("Invalid audio folder path: $path");

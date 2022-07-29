@@ -889,7 +889,7 @@ initJQuery(false);
 
 	function downloadXML(){
 		var checkedvalue = getRadioValue("deleteFileForm", "deleteFile");
-		window.open(baseURL + "scripts/download.cgi?file=../" + checkedvalue, "_self");
+		window.open("download.cgi?file=../" + checkedvalue, "_self");
 	}
 
 	// Confirms deletion of an xml file
