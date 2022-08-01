@@ -24,6 +24,7 @@
 
 	// Checks if user is logged in, ask to login
 	function login(){
+		global $CONFIG;
 		if (isset($_POST['password'])){
 			$_SESSION['login'] = "false";
 			// Ask user to login if no already logged in
@@ -307,48 +308,81 @@
  * File manipulation
  **************************************/
 
-	function isValidPath($path) {
+	/**
+	 * Tests that the path is somewhere inside the
+	 * application base directory.
+	 *
+	 * @param string $path abs or relative path to test
+	 * @return bool false if path is not inside app root
+	 */
+	function isValidAppPath($path) {
 		$haystack = realpath($path);
-		$needle = FLASHCARDS_BASE_DIR;
-		// check that base dir is contained in the path
+		$needle = APP_BASE_DIR;
 		if($needle !== "" && strncmp($haystack, $needle, strlen($needle)) === 0) {
 			return true;
 		}
 		return false;
 	}
 
-	function isXMLFilePath($path) {
-		$haystack = realpath($path);
-		return strpos($haystack, "/xml/") !== FALSE;
-	}
-
-	function isValidFilename($filename) {
-		return preg_match('/^\w+\.(mp3|xml)$/', $filename);
-	}
-
-	function canWriteFolder($path) {
-		$path = realpath($path);
-		error_log("canWriteFolder? Checking path: $path");
-		if(!isValidPath($path)) {
+	/**
+	 * Tests that the path is valid for audio files within a
+	 * hebrew course folder.
+	 *
+	 * Should match variations of:
+	 * 	  /hebrew/audio
+	 * 	  /hebrew/audio/test.mp3
+	 * 	  /hebrew/audio/week1/test.mp3
+	 * 	  /hebrew/audio/unit1/week1/test.mp3
+	 *
+	 * @param string $path abs or relative path to test
+	 * @return bool false if path is not a valid audio folder
+	 */
+	function isValidAudioPath($path) {
+		$abspath = realpath($path);
+		error_log("isValidAudioPath? path: $path abspath: $abspath");
+		if(!isValidAppPath($abspath)) {
 			return false;
 		}
-
-		$is_xml_folder = preg_match('/\/xml$/', $path);
-		$is_audio_folder = preg_match('/\/audio$/', $path);
-		$is_audio_sub_folder = preg_match('/\/audio\/\w+$/', $path);
-
-		$can_write_folder = $is_xml_folder || $is_audio_folder || $is_audio_sub_folder;
-		error_log("canWriteFolder? Result: " . var_export($can_write_folder,1));
-
-		return $can_write_folder;
+		$relative_path = substr($abspath, strlen(APP_BASE_DIR));
+		return (bool) preg_match('/^\/\w+\/audio(?:\/\w+)*(?:\/\w+\.mp3)?$/', $relative_path);
 	}
 
-	function canReadFolder($path) {
-		$path = realpath($path);
-		if(!isValidPath($path)) {
+	/**
+	 * Tests that the path is valid for xml files within a
+	 * hebrew course folder.
+	 *
+	 * Should match variations of:
+	 * 	  /hebrew/xml
+	 * 	  /hebrew/xml/prototype.xml
+	 *
+	 * @param string $path abs or relative path to test
+	 * @return bool false if path is not a valid xml folder
+	 */
+	function isValidXMLPath($path) {
+		$abspath = realpath($path);
+		error_log("isValidXMLPath? path: $path abspath: $abspath");
+		if(!isValidAppPath($abspath)) {
 			return false;
 		}
-		return true;
+		$relative_path = substr($abspath, strlen(APP_BASE_DIR));
+		return (bool) preg_match('/^\/\w+\/xml(\/\w+\.xml)?$/', $relative_path);
+	}
+
+	/**
+	 * Tests that the upload location is valid for the type of file.
+	 *
+	 * @param string $file_extension file extension without leading dot (e.g. mp3, xml).
+	 * @param string $path abs or relative path to test
+	 * @return bool false if path is not valid for the file type
+	 */
+	function isValidUploadLocation($file_extension, $path) {
+		switch($file_extension) {
+			case "mp3":
+				return isValidAudioPath($path);
+			case "xml":
+				return isValidXMLPath($path);
+		}
+		return false;
 	}
 
 	function newXMLFile($newfile){
@@ -381,6 +415,7 @@
 
 	// Uploads a file, with action of either add or replace
 	function uploadFile($file, $location = "xml/"){
+		error_log("uploadFile: $location");
 		// Alert an errorg if one has occured
 		if ($_FILES[$file]["error"] > 0){
 			if ($_FILES[$file]["error"] == 1){
@@ -394,24 +429,24 @@
 		// Upload file
 		else{
 			$uploaded_file_name = $_FILES[$file]["name"];
-			error_log("Uploading file...");
-			error_log(var_export($_FILES[$file], 1));
+			error_log("Uploaded file: ". var_export($_FILES[$file], 1));
 
-			// Check that folder is valid
-			if(!canWriteFolder($location)) {
-				error_log("Error: upload location invalid: $location");
-				javascript('alert("Error: Upload location invalid.");');
+			// Check the file name is valid
+			if(!preg_match('/^\w+\.(mp3|xml)$/', $uploaded_file_name)) {
+				error_log("Error: upload filename invalid: " . $uploaded_file_name);
+				javascript('alert("Error: Upload filename invalid.");');
 				return false;
 			}
 
-			// Validate filename
-			if(isValidFilename($uploaded_file_name)) {
-				move_uploaded_file($_FILES[$file]["tmp_name"], $location . $uploaded_file_name);
-			} else {
-				error_log("Error: upload file name invalid: $uploaded_file_name");
-				javascript('alert("Error: Upload file name invalid. Only alphanumeric characters allowed in xml or mp3 filenames.");');
+			// Check the file upload location is valid for the file extension
+			$file_extension = pathinfo($uploaded_file_name, PATHINFO_EXTENSION);
+			if(!isValidUploadLocation($file_extension, $location)) {
+				error_log("Error: upload file location invalid for $file_extension: " . $location);
+				javascript('alert("Error: Upload location invalid for $file_extension.");');
 				return false;
 			}
+
+			move_uploaded_file($_FILES[$file]["tmp_name"], $location . $uploaded_file_name);
 
 			// If filename is not in mapfile, update mapfile
 			if (!in_array($uploaded_file_name, $_SESSION['xmlFiles'], TRUE) && $location == "xml/"){
@@ -445,15 +480,10 @@
 		// Note: the filename includes the course-specific folder,
 		// so we make it relative from the parent folder to resolve correctly:
 		//   Hebrew123/xml/Test.xml --> ../Hebrew123/xml/Test.xml
-		$path = realpath("../".$filename);
-		if(!isXMLFilePath($path)) {
-			error_log("Error: only allowed to delete xml files: $filename ($path)");
-			alert("Error: only allowed to delete xml files");
-			return false;
-		}
-		if(!canWriteFolder(dirname($path))) {
-			error_log("Error: delete file permission denied: $filename ($path)");
-			alert("Error: delete file permission denied");
+		$abspath = realpath("../".$filename);
+		if(!isValidXMLPath($abspath)) {
+			error_log("Error: delete file permission denied: $filename ($abspath)");
+			alert("Error: delete file permission denied.");
 			return false;
 		}
 
@@ -471,33 +501,24 @@
 		$_SESSION['map']->dump_file("xml/map.xml", false, true);
 
 		// Delete file from server
-		error_log("deleteFile: permanently deleting file: $path");
-		unlink($path);
+		$result = unlink($abspath);
+		if(!$result) {
+			error_log("Error deleting file: $abspath");
+		}
 
 		getXMLFileNamesPHP();
 	}
 
 	function downloadFile($filename){
-		$path = realpath($filename);
-		if(!isXMLFilePath($path)) {
-			error_log("Error: only allowed to download xml files: $filename ($path)");
-			alert("Error: only allowed to download xml files");
+		$abspath = realpath($filename);
+		if(!isValidXMLPath($abspath)) {
+			error_log("Error: download file permission denied: $filename ($abspath)");
+			alert("Error: download file permission denied: $filename");
 			return false;
 		}
-		if(!canReadFolder(dirname($path))) {
-			error_log("Error: download file permission denied: $filename ($path)");
-			alert("Error: download file permission denied");
-			return false;
-		}
-		if(!file_exists($path)) {
-			error_log("Error: download file not found: $filename ($path)");
-			alert("Error: download file not found!");
-			return false;
-		}
-
 		header("content-type: application/xhtml+xml");
-		header("content-disposition: attachment;filename=" . basename($path));
-		echo file_get_contents($path);
+		header("content-disposition: attachment;filename=" . basename($abspath));
+		echo file_get_contents($abspath);
 	}
 
 /***************************************
@@ -533,7 +554,7 @@
 			$path = substr($path, 0, -1);
 		}
 
-		if(is_dir($path)){
+		if(is_dir($path) && isValidAudioPath($path)){
 			$contents = scan_dir($path);
 			$newSelect = 'Current Folder: <br />'.preg_replace("/(^[.][.]|^[.]\/audio)[\/]*/", "", $path . "/");
 			$newSelect .= '<select id="audioSelect" onchange="checkMP3(this.value)">';
@@ -560,17 +581,21 @@
 		if (file_exists($path)) {
 			alert('That path already exists!');
 		} else {
-			if(canWriteFolder($path)) {
+			// check proposed folder name before creating it
+			if(preg_match('/^(?:\.\/)?audio(?:\/\w+)*$/', $path)) {
 				mkdir($path, 0777);
 			} else {
 				error_log("Invalid audio folder path: $path");
-				alert('Invalid file path. Must contain only alphanumeric characters (no spaces).');
+				alert('Invalid audio folder path. Must contain only alphanumeric characters.');
 			}
 		}
 	}
 
 	function findAudioFolders($directory = '..'){
 		$folders = array();
+		if(!isValidAudioPath($directory)) {
+			return $folders;
+		}
 		if($dirhandler = opendir($directory)) {
             while (($sub = readdir($dirhandler)) !== FALSE) {
 				$path = $directory."/".$sub;

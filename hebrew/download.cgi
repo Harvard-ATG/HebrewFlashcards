@@ -1,5 +1,5 @@
 #!/usr/local/bin/php
 <?php
-require("./admin.php");
-downloadFile($_GET["file"])
+require("../scripts/admin.php");
+downloadFile($_GET["file"]);
 ?>

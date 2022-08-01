@@ -1,13 +1,13 @@
 <?php
 
-// absolute path to the flashcards folder
+// absolute path to the flashcards base directory
 // defined as global constant for convenience
-if ( ! defined( 'FLASHCARDS_BASE_DIR' ) ) {
-	define( 'FLASHCARDS_BASE_DIR', dirname(__DIR__));
+if ( ! defined( 'APP_BASE_DIR' ) ) {
+	define( 'APP_BASE_DIR', dirname(__DIR__));
 }
 
 return array(
-    'base_dir' => FLASHCARDS_BASE_DIR,
+    'base_dir' => APP_BASE_DIR,
     'auth' => array(
         'admin' => 'admin',
         'hebrew' => 'hebrew',
