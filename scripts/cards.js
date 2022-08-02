@@ -796,7 +796,7 @@ initJQuery(false);
 		initialize();
 		xmlTable();
 		fileInterface();
-		prototypeTable();
+		//prototypeTable(); // commented out 8/2/22 after review
 		audioTable();
 		setWeek(getCurDirFilePath(xmlFiles[0]));
 		//setWeek(xmlFiles[0].slice(0, xmlFiles[0].indexOf('.')));
