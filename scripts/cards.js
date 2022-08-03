@@ -796,7 +796,7 @@ initJQuery(false);
 		initialize();
 		xmlTable();
 		fileInterface();
-		prototypeTable();
+		//prototypeTable(); // commented out 8/2/22 after review
 		audioTable();
 		setWeek(getCurDirFilePath(xmlFiles[0]));
 		//setWeek(xmlFiles[0].slice(0, xmlFiles[0].indexOf('.')));
@@ -889,7 +889,7 @@ initJQuery(false);
 
 	function downloadXML(){
 		var checkedvalue = getRadioValue("deleteFileForm", "deleteFile");
-		window.open(baseURL + "scripts/download.cgi?file=../" + checkedvalue, "_self");
+		window.open("download.cgi?file=../" + checkedvalue, "_self");
 	}
 
 	// Confirms deletion of an xml file

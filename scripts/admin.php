@@ -1,6 +1,7 @@
 <?php @session_start();
 
 	require_once("../lib/domxml-php4-to-php5.php");
+	$CONFIG = require_once("../config/config.php");
 
 	//clearBrowserCache();
 	header('Content-Type: text/html; charset=UTF-8');
@@ -11,63 +12,45 @@
 		logout();
 	}
 
-	// YES, I know this is not secure at all, but it is quick
-	$_SESSION['passwords'] = array();
-	$_SESSION['passwords']['admin'] = "admin";
-	$_SESSION['passwords']['hebrew'] =  "hebrew";
-	// $_SESSION['passwords']['spanish'] =  "";
-	// $_SESSION['passwords']['french'] = "";
-	// $_SESSION['passwords']['test'] = "";
-	// $_SESSION['passwords']['tibet'] = "";
-	// $_SESSION['passwords']['turkish'] = "";
-
-	$_SESSION['current'] = '';
-
-	$current = '';
-	$cwd = strtoupper(getcwd());
-	if (strstr($cwd, "HEBREW"))
-		$current = 'hebrew';
-	else if (strstr($cwd, "SPANISH"))
-		$current = 'spanish';
-	else if (strstr($cwd, "FRENCH"))
-		$current = 'french';
-	else if (strstr($cwd, "TIBET"))
-		$current = 'tibet';
-	else if (strstr($cwd, "TEST"))
-		$current = 'test';
-	else
-		$current = 'test';
-
-	$_SESSION['current'] = $current;
+	// Lookup auth credentials for current directory
+	$dirname = strtolower(basename(getcwd()));
+	if(isset($CONFIG['auth'][$dirname])) {
+		$_SESSION['current'] = $dirname;
+	} else {
+		error_log("Admin credentials not configured for $dirname");
+		print("Admin credentials not configured for $dirname");
+		exit();
+	}
 
 	// Checks if user is logged in, ask to login
 	function login(){
+		global $CONFIG;
 		if (isset($_POST['password'])){
 			$_SESSION['login'] = "false";
 			// Ask user to login if no already logged in
-			if($_POST['password'] != $_SESSION['passwords'][$_SESSION['current']] && $_POST['password'] != $_SESSION['passwords']['admin']){
+			if($_POST['password'] != $CONFIG['auth'][$_SESSION['current']] && $_POST['password'] != $CONFIG['auth']['admin']){
 				javascript('alert("Incorrect Password!");');
 			}
 			else{
-				$_SESSION['pword'] = $_SESSION['passwords'][$_SESSION['current']];
+				$_SESSION['pword'] = $CONFIG['auth'][$_SESSION['current']];
 			}
 		}
-		if ($_SESSION['pword'] != $_SESSION['passwords'][$_SESSION['current']]){
+		if ($_SESSION['pword'] != $CONFIG['auth'][$_SESSION['current']]){
 			echo('<form method="post"><label>Password: </label><input type="password" name="password" />' .
 					'<button type="submit">Submit</button></form><br /><br /><a href="index.html">Flashcards</a>');
 		}
 		// User is logged in:
-		else if ($_SESSION['pword'] == $_SESSION['passwords'][$_SESSION['current']]){
+		else if ($_SESSION['pword'] == $CONFIG['auth'][$_SESSION['current']]){
 			/**********************************************
 			 * SERVER TASKS
 			 *********************************************/
 			initializePHP();
 			// Upload a File
 			if(isset($_FILES['file'])){
-				uploadFile("file", "replace");
+				uploadFile("file");
 			}
 			if(isset($_FILES['newAudioFile'])){
-				uploadFile("newAudioFile","replace", $_POST["currentFolder"]);
+				uploadFile("newAudioFile", $_POST["currentFolder"]);
 			}
 
 			check("newXMLFile", "newFile"); // Create a New XML File
@@ -324,6 +307,84 @@
 /***************************************
  * File manipulation
  **************************************/
+
+	/**
+	 * Tests that the path is somewhere inside the
+	 * application base directory.
+	 *
+	 * @param string $path abs or relative path to test
+	 * @return bool false if path is not inside app root
+	 */
+	function isValidAppPath($path) {
+		$haystack = realpath($path);
+		$needle = APP_BASE_DIR;
+		if($needle !== "" && strncmp($haystack, $needle, strlen($needle)) === 0) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Tests that the path is valid for audio files within a
+	 * hebrew course folder.
+	 *
+	 * Should match variations of:
+	 * 	  /hebrew/audio
+	 * 	  /hebrew/audio/test.mp3
+	 * 	  /hebrew/audio/week1/test.mp3
+	 * 	  /hebrew/audio/unit1/week1/test.mp3
+	 *
+	 * @param string $path abs or relative path to test
+	 * @return bool false if path is not a valid audio folder
+	 */
+	function isValidAudioPath($path) {
+		$abspath = realpath($path);
+		error_log("isValidAudioPath? path: $path abspath: $abspath");
+		if(!isValidAppPath($abspath)) {
+			return false;
+		}
+		$relative_path = substr($abspath, strlen(APP_BASE_DIR));
+		return (bool) preg_match('/^\/\w+\/audio(?:\/\w+)*(?:\/\w+\.mp3)?$/', $relative_path);
+	}
+
+	/**
+	 * Tests that the path is valid for xml files within a
+	 * hebrew course folder.
+	 *
+	 * Should match variations of:
+	 * 	  /hebrew/xml
+	 * 	  /hebrew/xml/prototype.xml
+	 *
+	 * @param string $path abs or relative path to test
+	 * @return bool false if path is not a valid xml folder
+	 */
+	function isValidXMLPath($path) {
+		$abspath = realpath($path);
+		error_log("isValidXMLPath? path: $path abspath: $abspath");
+		if(!isValidAppPath($abspath)) {
+			return false;
+		}
+		$relative_path = substr($abspath, strlen(APP_BASE_DIR));
+		return (bool) preg_match('/^\/\w+\/xml(\/\w+\.xml)?$/', $relative_path);
+	}
+
+	/**
+	 * Tests that the upload location is valid for the type of file.
+	 *
+	 * @param string $file_extension file extension without leading dot (e.g. mp3, xml).
+	 * @param string $path abs or relative path to test
+	 * @return bool false if path is not valid for the file type
+	 */
+	function isValidUploadLocation($file_extension, $path) {
+		switch($file_extension) {
+			case "mp3":
+				return isValidAudioPath($path);
+			case "xml":
+				return isValidXMLPath($path);
+		}
+		return false;
+	}
+
 	function newXMLFile($newfile){
 		if (!is_file("xml/" . newfile)){
 			$newXML = fopen("xml/" . $newfile, "w");
@@ -353,7 +414,8 @@
 	}
 
 	// Uploads a file, with action of either add or replace
-	function uploadFile($file, $action, $location = "xml/"){
+	function uploadFile($file, $location = "xml/"){
+		error_log("uploadFile: $location");
 		// Alert an errorg if one has occured
 		if ($_FILES[$file]["error"] > 0){
 			if ($_FILES[$file]["error"] == 1){
@@ -364,19 +426,33 @@
 			javascript('alert("Error: ' . $_FILES[$file]["error"] . '");');
 			return false;
 		}
-		// If file is new, but an filename already exists on the server, alert user
-		else if($action != "replace" && file_exists($location . $_FILES[$file]["name"]))
-			javascript('alert("' . $_FILES[$file]["name"] . ' already exists. To update or replace this file, select Update/Replace instead of Upload");');
-
 		// Upload file
 		else{
-			move_uploaded_file($_FILES[$file]["tmp_name"], $location . $_FILES[$file]["name"]);
+			$uploaded_file_name = $_FILES[$file]["name"];
+			error_log("Uploaded file: ". var_export($_FILES[$file], 1));
+
+			// Check the file name is valid
+			if(!preg_match('/^\w+\.(mp3|xml)$/', $uploaded_file_name)) {
+				error_log("Error: upload filename invalid: " . $uploaded_file_name);
+				javascript('alert("Error: Upload filename invalid.");');
+				return false;
+			}
+
+			// Check the file upload location is valid for the file extension
+			$file_extension = pathinfo($uploaded_file_name, PATHINFO_EXTENSION);
+			if(!isValidUploadLocation($file_extension, $location)) {
+				error_log("Error: upload file location invalid for $file_extension: " . $location);
+				javascript('alert("Error: Upload location invalid for $file_extension.");');
+				return false;
+			}
+
+			move_uploaded_file($_FILES[$file]["tmp_name"], $location . $uploaded_file_name);
 
 			// If filename is not in mapfile, update mapfile
-			if (!in_array($_FILES[$file]["name"], $_SESSION['xmlFiles'], TRUE) && $location == "xml/"){
-				array_push($_SESSION['xmlFiles'], $_FILES[$file]["name"]);
+			if (!in_array($uploaded_file_name, $_SESSION['xmlFiles'], TRUE) && $location == "xml/"){
+				array_push($_SESSION['xmlFiles'], $uploaded_file_name);
 				$newNode = $_SESSION['map']->create_element("xml");
-				$newText = $_SESSION['map']->create_text_node($_FILES[$file]["name"]);
+				$newText = $_SESSION['map']->create_text_node($uploaded_file_name);
 				$newNode->append_child($newText);
 				$root = $_SESSION['map']->get_elements_by_tagname('map');
                 $root[0]->append_child($newNode);
@@ -384,14 +460,14 @@
 			}
 
 			// Give file worldwide reading access
-			chmod($location . $_FILES[$file]["name"], 0644);
-			javascript('alert("Uploaded: ' . $_FILES[$file]["name"] . '\n' . "Type: " . $_FILES[$file]["type"] . '\n' .
-				"Size: " . ($_FILES[$file]["size"] / 1024) . " Kb" . '\n' . "Stored in: " . $location. $_FILES[$file]["name"] .'");');
+			chmod($location . $uploaded_file_name, 0644);
+			javascript('alert("Uploaded: ' . $uploaded_file_name . '\n' . "Type: " . $_FILES[$file]["type"] . '\n' .
+				"Size: " . ($_FILES[$file]["size"] / 1024) . " Kb" . '\n' . "Stored in: " . $location. $uploaded_file_name .'");');
 		}
 		if ($location == "xml/"){
 			getXMLFileNamesPHP();
 			javascript("drawTable()");
-			javascript('setWeek(foldername + "/xml/'.$_FILES[$file]["name"]. '")');
+			javascript('setWeek(foldername + "/xml/'.$uploaded_file_name. '")');
 			$_SESSION['tableDrawn'] = "true";
 		}
 		unset($_FILES['file']);
@@ -399,6 +475,18 @@
 
 	// Remove the file requested to be deleted
 	function deleteFile($filename){
+		error_log("deleteFile: $filename");
+
+		// Note: the filename includes the course-specific folder,
+		// so we make it relative from the parent folder to resolve correctly:
+		//   Hebrew123/xml/Test.xml --> ../Hebrew123/xml/Test.xml
+		$abspath = realpath("../".$filename);
+		if(!isValidXMLPath($abspath)) {
+			error_log("Error: delete file permission denied: $filename ($abspath)");
+			alert("Error: delete file permission denied.");
+			return false;
+		}
+
 		// Remove from mapfile
 		$files = $_SESSION['map']->get_elements_by_tagname("xml");
 		$localname = basename($filename);
@@ -413,15 +501,24 @@
 		$_SESSION['map']->dump_file("xml/map.xml", false, true);
 
 		// Delete file from server
-		unlink("../" . $filename);
+		$result = unlink($abspath);
+		if(!$result) {
+			error_log("Error deleting file: $abspath");
+		}
 
 		getXMLFileNamesPHP();
 	}
 
 	function downloadFile($filename){
+		$abspath = realpath($filename);
+		if(!isValidXMLPath($abspath)) {
+			error_log("Error: download file permission denied: $filename ($abspath)");
+			alert("Error: download file permission denied: $filename");
+			return false;
+		}
 		header("content-type: application/xhtml+xml");
-		header("content-disposition: attachment;filename=" . basename($filename));
-		echo file_get_contents($filename);
+		header("content-disposition: attachment;filename=" . basename($abspath));
+		echo file_get_contents($abspath);
 	}
 
 /***************************************
@@ -451,7 +548,13 @@
 		}
 		if (!strstr($path, "/audio"))
 			return false;
-		if(is_dir($path)){
+
+		// strip trailing slash since the code below assumes no trailing slash.
+		if($path[strlen($path)-1] == "/") {
+			$path = substr($path, 0, -1);
+		}
+
+		if(is_dir($path) && isValidAudioPath($path)){
 			$contents = scan_dir($path);
 			$newSelect = 'Current Folder: <br />'.preg_replace("/(^[.][.]|^[.]\/audio)[\/]*/", "", $path . "/");
 			$newSelect .= '<select id="audioSelect" onchange="checkMP3(this.value)">';
@@ -474,14 +577,25 @@
 	}
 
 	function newAudioFolder($path){
-		if (file_exists($path))
+		error_log("newAudioFolder: $path");
+		if (file_exists($path)) {
 			alert('That path already exists!');
-		else
-			mkdir($path, 0777);
+		} else {
+			// check proposed folder name before creating it
+			if(preg_match('/^(?:\.\/)?audio(?:\/\w+)*$/', $path)) {
+				mkdir($path, 0777);
+			} else {
+				error_log("Invalid audio folder path: $path");
+				alert('Invalid audio folder path. Must contain only alphanumeric characters.');
+			}
+		}
 	}
 
 	function findAudioFolders($directory = '..'){
 		$folders = array();
+		if(!isValidAudioPath($directory)) {
+			return $folders;
+		}
 		if($dirhandler = opendir($directory)) {
             while (($sub = readdir($dirhandler)) !== FALSE) {
 				$path = $directory."/".$sub;
